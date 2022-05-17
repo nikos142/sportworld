@@ -74,6 +74,7 @@ React.useEffect(()=>{
         url: "http://localhost:3001/transfers/"+id,
     })
     .then(response =>{
+        console.log(response.data)
         var tempTransfers=[]
         response.data.forEach((element) =>{
                  var obj= Object.create(TransferObject)
@@ -83,9 +84,9 @@ React.useEffect(()=>{
                     obj.to = element.to;
                     obj.date=element.date;
                     tempTransfers.push(obj)
-           
         })
         setTransfers(tempTransfers)
+
     })
     .catch(error=>{
         console.log(error)

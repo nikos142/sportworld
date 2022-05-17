@@ -94,42 +94,43 @@ app.get("/:league", async (req, res) => {
      
 
  app.get("/rules/:id", async (req, res) => {
-   var id=req.params.id
-   try{
-     var rules =await database.getRules(id)
-   }
-   catch
-   {
-     console.log(error)
-   }
-   res.send(rules)
+      var id=req.params.id
+      try{
+        var rules =await database.getRules(id)
+      }
+      catch
+      {
+        console.log(error)
+      }
+      res.send(rules)
  })
  
  app.get("/transfers/:id", async (req, res) =>
  {
    var id=req.params.id
+  
    try{
       var transfers =await database.getTransfers(id)
-      var data=[]
-     for(i in transfers)
-     {
-       const obj=new Object(transferObject)
-       obj.id=transfers[i].id
-       obj.fee=transfers[i].fee
-       var date=new Date(transfers[i].date)
-       obj.date = date.getDate() +"-"+date.getMonth()+"-"+date.getFullYear()
-       obj.player = await database.getPlayer(transfers[i].player_id)
-       obj.from = await database.getTeamById(transfers[i].from_team)
-       obj.to =await database.getTeamById(transfers[i].to_team)
-       console.log(obj)
-      data.push(obj)
-     }
-   }
-   catch(error)
-   {
-     console.log(error)
-   }
-   res.send(data)
+      var data = []
+ 
+        for(i in transfers)
+        {
+          const obj= Object.create(transferObject)
+          obj.id=transfers[i].id
+          obj.fee=transfers[i].fee
+          var date=new Date(transfers[i].date)
+          obj.date = date.getDate() +"-"+date.getMonth()+"-"+date.getFullYear()
+          obj.player = await database.getPlayer(transfers[i].player_id)
+          obj.from = await database.getTeamById(transfers[i].from_team)
+          obj.to =await database.getTeamById(transfers[i].to_team)
+          data.push(obj)
+        }
+      }
+      catch(error)
+      {
+        console.log(error)
+      }
+      res.send(data)
  })
 
 app.listen(PORT, () => {
