@@ -28,10 +28,9 @@ function App() {
     </div>
 
 <Routes>
-<Route exact path="/index" element={<Index/>} />
 <Route exact path="/football" element={<Football/>}/>
 <Route exact path="/football/premierleague" element={<PremierLeague/>}/>
-<Route exact path="/football/:league/team/:id/:name"  element={<Profile/>} />
+<Route exact path="/football/:league/:id"  element={<Profile/>} />
 <Route exact path="/football/laliga" element={<LaLiga/>}/>
 <Route exact path="/football/bundesliga" element={<Bundesliga/>}/>
 <Route exact path="/football/serieA" element={<SerieA/>}/>
@@ -41,7 +40,7 @@ function App() {
 <Route exact path="/tennis" element={<Tennis/>}/>
 <Route exact path="/formula1" element={<Formula1/>}/>
 <Route exact path="/motogp" element={<Motogp/>}/>
-<Route exact path="/"  />
+<Route exact path="/"  element={<Index/>} />
 </Routes>
 </Router>
   );
