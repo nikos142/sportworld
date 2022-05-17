@@ -15,7 +15,7 @@ return(<>
         </div>
         <div className='col-md-6'>
         <h3>Standings</h3>
-           <TeamsTable league="premierleague"/>
+           <TeamsTable league="premierleague" id="1"/>
         </div>
     </div>
 </div>

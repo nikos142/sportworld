@@ -10,11 +10,11 @@ return(<>
 <div className='container'>
     <div className='row'>
         <div className='col-md-6'>
-            <h3>Premier League News</h3>
+            <h3>Serie A News</h3>
         </div>
         <div className='col-md-6'>
         <h3>Standings</h3>
-           <TeamsTable league="serieA"/>
+           <TeamsTable league="serieA" id="3"/>
         </div>
     </div>
 </div>
