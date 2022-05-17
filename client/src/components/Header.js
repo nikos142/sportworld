@@ -5,7 +5,7 @@ export const Header = () => {
     return(
         <div className="header">
             <nav>
-            <Link to="/index" 
+            <Link to="/" 
             style={{float:"left", color:"black", textDecoration:"none",fontSize:"20pt", paddingLeft:"10px" , paddingTop:"3px"}}>
                 Uni-Sport</Link>
             <ul  className="nav  ">
