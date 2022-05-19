@@ -4,12 +4,21 @@ const matchObject = {
     home_team:"",
     away_team:"",
     done:"",
-   home_team_score:"",
-   away_team_score:"",
-   date:"",
-   time:""
+    facts:[],
+    home_team_score:"",
+    away_team_score:"",
+    date:"",
+    time:""
 }
 
+const factsObject ={
+    id:"",
+    match_id:"",
+    player:"",
+    type:"",
+    team:"",
+    minute:"",
+}
 
 const transferObject={
     id:"",
@@ -19,4 +28,5 @@ const transferObject={
     fee:"",
     date:""
 }
-module.exports ={matchObject, transferObject}
+
+module.exports ={matchObject, factsObject,  transferObject}

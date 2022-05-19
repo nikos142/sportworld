@@ -64,18 +64,29 @@ async function getRules(id)  {
 let sql = "SELECT * FROM rules  WHERE id=?"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows;
-  }
+}
   
 async function getTransfers(id)  {
   let sql = "SELECT * FROM transfers   WHERE from_team= ? OR to_team=?"
   const [rows, fields] = await promisePool.execute(sql, [id, id]);
   return rows;
-  }
+}
 
 async function getPlayer(id)  {
-  let sql = "SELECT fname, lname FROM football_players  WHERE  id=?"
-   const [rows, fields] = await promisePool.execute(sql, [id]);
-        return rows[0].fname+" "+rows[0].lname;
-        }
+  let sql = "SELECT * FROM football_players  WHERE  id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows[0]
+}
 
-  module.exports={getTransfers,getPlayer, getRules, getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, getLeagueById, getLeague , getLeagueTeams, getTeamsRoster,}
+async function getMatchFacts(id){
+  let sql = "SELECT * FROM match_facts  WHERE  match_id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+
+async function getScorer(id)  {
+  let sql = "SELECT fname , lname, team_id FROM football_players  WHERE  id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+  module.exports={getTransfers,getScorer,getMatchFacts, getPlayer, getRules, getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, getLeagueById, getLeague , getLeagueTeams, getTeamsRoster,}

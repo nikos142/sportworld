@@ -1,30 +1,37 @@
 import Tab from 'react-bootstrap/Tab';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Nav from 'react-bootstrap/Nav'
+import Nav from 'react-bootstrap/Nav';
+import { Link } from 'react-router-dom';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
 import React from 'react';
 import axios from 'axios';
-import {FixtureObject,ResultObject, TransferObject} from"./objects/objects.js";
+import {FixtureObject,PlayerObject,ResultObject, factsObject, TransferObject} from"./objects/objects.js";
+
 
 export default function Infotabs({id}) {
 
-    
 const [names, setNames]= React.useState([])
 const [results, setResults]= React.useState([])
 const [fixtures, setFixtures]= React.useState([])
 const [transfers, setTransfers]= React.useState([])
+
+
 React.useEffect(()=>{
     axios({
         method: 'GET',
         url: "http://localhost:3001/players/"+id,
     })
     .then(response =>{
-        console.log(response.data)
-        var tempnames=[]
+        var players=[]
          response.data.forEach((element) => {
-            tempnames.push(element.fname+" " + element.lname+" ")
+             var obj =Object.create(PlayerObject)
+             obj.id=element.id
+             obj.name=element.fname+" " + element.lname
+             players.push(obj)
           });
-          setNames(tempnames)
+          setNames(players)
     })
     .catch(error=>{
         console.log(error)
@@ -59,11 +66,24 @@ React.useEffect(()=>{
             obj2.score = element.home_team_score + ":" +element.away_team_score;
             obj2.date=element.date;
             obj2.time = element.time;
+            var tempfacts=[]
+            console.log(element.facts)
+            for (var i in element.facts)
+            {
+                var obj3= Object.create(factsObject)
+                obj3.player= element.facts[i].player
+                obj3.type= element.facts[i].type
+                obj3.team= element.facts[i].team
+                obj3.minute= element.facts[i].minute
+                tempfacts.push(obj3)
+            }
+            obj2.facts= tempfacts
             tempResults.push(obj2)
         }
     })
       setFixtures(tempFixtures)
       setResults(tempResults)
+      console.log(results)
     })
     .catch(error=>{
         console.log(error)
@@ -74,7 +94,6 @@ React.useEffect(()=>{
         url: "http://localhost:3001/transfers/"+id,
     })
     .then(response =>{
-        console.log(response.data)
         var tempTransfers=[]
         response.data.forEach((element) =>{
                  var obj= Object.create(TransferObject)
@@ -115,33 +134,69 @@ React.useEffect(()=>{
                     <Col sm={9}>
                     <Tab.Content>
                         <Tab.Pane eventKey="first">
-                        {names.map(( name ,index) => (<p key={index}>{name}</p>) )}
+                        {names.map(( row ,index) => (<p><Link to={"/football/player/profile/"+row.id} >{row.name}</Link></p>) )}
                         </Tab.Pane>
                         <Tab.Pane eventKey="second">
                             {results.length>0?(<table className='table'>
                                 <thead>
-                                    <td>Match</td><td>Home Team</td><td>Away Team</td><td>Score</td><td>Date</td><td>Time</td>
+                                    <tr>
+                                        <th>Match</th>
+                                        <th>Home Team</th>
+                                        <th>Away Team</th>
+                                        <th>Score</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                        {results.map(( item ,index) => (<tr key={index}>
-                                                            <td>{index+1}</td>
-                                                            <td>{item.home_team}</td>
-                                                            <td>{item.away_team}</td>
-                                                            <td>{item.score}</td>
-                                                            <td>{item.date}</td>
-                                                            <td>{item.time}</td>
-                                                        </tr>) )}
-                        </tbody>
-                        </table>):(<p>No results</p>)}
+                                {results.map(( item ,index) => (
+                                    <tr key={index}>
+                                        <td>{index+1}</td>
+                                        <td>{item.home_team}</td>
+                                        <td>{item.away_team}</td>
+                                        <OverlayTrigger
+                                            trigger="hover"
+                                            key="bottom"
+                                            placement='right'
+                                            overlay={
+                                            <Popover id={`popover`}>
+                                            <Popover.Header as="h3">{`Match Facts`}</Popover.Header>
+                                                <Popover.Body>
+                                                    {item.facts.map((facts, index)=>(<p key={index}> {facts.minute} {facts.type=="goal"?<img 
+                                                                                                                                    style={{marginLeft:"5px", marginRight:"5px", width:"12px", height:"12px"}}
+                                                                                                                                    src="http://localhost/f1project/football.png"/>:<img 
+                                                                                                                                    style={{marginLeft:"5px", marginRight:"5px",width:"12px", height:"12px"}}
+                                                                                                                                    src="http://localhost/f1project/yellow_card.jpg"/>}{facts.player}</p>))}
+                                                </Popover.Body>
+                                            </Popover>}>
+                                            <td> {item.score}</td>
+                                        </OverlayTrigger>
+                                        <td>{item.date}</td>
+                                        <td>{item.time}</td>
+                                    </tr>) )}
+                                </tbody>
+                            </table>):(<p>No results</p>)}
                         </Tab.Pane>
                         <Tab.Pane eventKey="third">
                        {fixtures.length>0 ?(<table className='table'>
                                 <thead>
-                                    <td>Match</td><td>Home Team</td><td>Away Team</td><td>Date</td><td>Time</td>
+                                    <tr>
+                                        <th>Match</th>
+                                        <th>Home Team</th>
+                                        <th>Away Team</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                        {fixtures.map(( item ,index) => (<tr key={index}> <td>{index+1}</td><td>{item.home_team}</td><td>{item.away_team}</td><td>{item.date}</td><td>{item.time}</td></tr>) )}
-                        </tbody>
+                                {fixtures.map(( item ,index) => (<tr key={index}>
+                                                                                <td>{index+1}</td>
+                                                                                <td>{item.home_team}</td>
+                                                                                <td>{item.away_team}</td>
+                                                                                <td>{item.date}</td>
+                                                                                <td>{item.time}</td>
+                                                                </tr>))}
+                                </tbody>
                         </table>):(<p>No scheduled matches</p>)}
                     </Tab.Pane>
                     <Tab.Pane eventKey="fourth">

@@ -15,12 +15,14 @@ import {Header} from './components/Header';
 import LaLiga from "./pages/laliga";
 import Bundesliga from "./pages/bundesliga";
 import Profile from "./components/profile";
+import Player from "./components/player";
 import Ligue1 from "./pages/ligue1";
 
 
 
-function App() {
 
+function App() {
+  React.useEffect(() => { document.body.style.backgroundColor = '#EFEFEE'}, [])
   return (
     <Router>
     <div className="App">
@@ -29,6 +31,7 @@ function App() {
 
 <Routes>
 <Route exact path="/football" element={<Football/>}/>
+<Route exact path="/football/player/profile/:id" element={<Player/>}/>
 <Route exact path="/football/premierleague" element={<PremierLeague/>}/>
 <Route exact path="/football/:league/:id"  element={<Profile/>} />
 <Route exact path="/football/laliga" element={<LaLiga/>}/>

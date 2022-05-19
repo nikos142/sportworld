@@ -8,7 +8,7 @@ return(<>
 
 <div className="container">
     <div className="row" style={{textAlign:"center", marginTop:"30px"}}>
-        <div className="col-md-4">
+        <div className="col-md-4 mycard">
         <LeagueCard url="/football/premierleague" title="Premier League" img="http://localhost/f1project/premier.png"/>
         </div>
         <div className="col-md-4">

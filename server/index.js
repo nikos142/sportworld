@@ -1,9 +1,10 @@
 const express = require("express");
+const { jsonp } = require("express/lib/response");
 const PORT = process.env.PORT || 3000;
 const app = express();
 const path = require("path");
 const database = require("./database.js")
-const {matchObject, transferObject}=require("./objects/matchObject")
+const {matchObject, factsObject, transferObject}=require("./objects/matchObject")
 
 
 
@@ -57,15 +58,30 @@ app.get("/:league", async (req, res) => {
             var score  = await database.getMatchScore(matches[i].id)
             obj.home_team_score = score[0].home_team_score
             obj.away_team_score = score[0].away_team_score
+            var facts= await database.getMatchFacts(matches[i].id)
+            var tempfacts=[]
+           for( j in facts )
+            {  
+              const obj2 = Object.create(factsObject)
+              obj2.id = facts[j].id
+              obj2.match_id = facts[j].match_id
+              var player = await database.getScorer(facts[j].player_id)
+              obj2.team= await database.getTeamById(player[0].team_id)
+              obj2.player=player[0].fname+" "+player[0].lname
+              obj2.minute=facts[j].minute
+              obj2.type=facts[j].type
+              tempfacts.push(obj2)
+            }  
          }
-            tempmatches.push(obj)
+           obj.facts = tempfacts
+           tempmatches.push(obj)
         }
             res.send(tempmatches)
           }
           catch(error)
           {
             console.log(error)
-          }
+          }  
     })
 
   app.get("/profile/:id", async (req, res) => {
@@ -92,13 +108,24 @@ app.get("/:league", async (req, res) => {
           res.send(players)
      })
      
+     app.get("/player/:id" , async (req, res) => {
+      var id=req.params.id
+      try{
+        var player= await database.getPlayer(id)
+          }
+          catch(error)
+          {
+            console.log(error)
+          }
+          res.send(player)
+     })
 
  app.get("/rules/:id", async (req, res) => {
       var id=req.params.id
       try{
         var rules =await database.getRules(id)
       }
-      catch
+      catch(error)
       {
         console.log(error)
       }
@@ -112,7 +139,6 @@ app.get("/:league", async (req, res) => {
    try{
       var transfers =await database.getTransfers(id)
       var data = []
- 
         for(i in transfers)
         {
           const obj= Object.create(transferObject)
@@ -120,7 +146,8 @@ app.get("/:league", async (req, res) => {
           obj.fee=transfers[i].fee
           var date=new Date(transfers[i].date)
           obj.date = date.getDate() +"-"+date.getMonth()+"-"+date.getFullYear()
-          obj.player = await database.getPlayer(transfers[i].player_id)
+          var player = await database.getPlayer(transfers[i].player_id)
+          obj.player = player.fname+" "+player.lname 
           obj.from = await database.getTeamById(transfers[i].from_team)
           obj.to =await database.getTeamById(transfers[i].to_team)
           data.push(obj)
