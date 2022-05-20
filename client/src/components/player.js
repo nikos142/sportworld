@@ -17,8 +17,8 @@ export default function Player (){
                  obj.name=response.data.fname+" "+response.data.lname
                  obj.nationality=response.data.nationality
                  obj.foot=response.data.foot
+                 obj.position=response.data.position
                  obj.worth=response.data.worth
-                 console.log(obj)
                 setNames(obj)
         })
         .catch(error=>{
@@ -39,6 +39,7 @@ export default function Player (){
                 <div className="col-md-3" >
                     <p><b>name:</b> {names.name}</p>
                     <p><b>nationality:</b> {names.nationality} </p>
+                    <p><b>Position:</b> {names.position} </p>
                     <p><b>Preferred foot:</b> {names.foot} </p>
                     <p><b>Worth: {names.worth}€ </b></p>
                 </div>

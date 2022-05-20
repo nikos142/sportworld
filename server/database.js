@@ -11,6 +11,7 @@ const connection =  mysql.createPool({
   
   const promisePool = connection.promise();
 
+  /***************  FOOTBALL  ******************* */
 
  async function getLeagueTeams(id)  {
   let sql = "Select * from football_teams where league_id= ? order by points desc;"
@@ -89,4 +90,19 @@ async function getScorer(id)  {
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows
 }
-  module.exports={getTransfers,getScorer,getMatchFacts, getPlayer, getRules, getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, getLeagueById, getLeague , getLeagueTeams, getTeamsRoster,}
+
+
+/***************  TENNIS  ******************/
+async function getAtpRanking()  {
+  let sql = "SELECT * FROM tennis_players  order by atp_rank ASC"
+  const [rows, fields] = await promisePool.execute(sql);
+  return rows
+}
+
+async function getAtpTournaments()  {
+  let sql = "SELECT * FROM `atp_tour`"
+  const [rows, fields] = await promisePool.execute(sql);
+  return rows
+}
+
+  module.exports={getAtpTournaments,getAtpRanking, getTransfers,getScorer,getMatchFacts, getPlayer, getRules, getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, getLeagueById, getLeague , getLeagueTeams, getTeamsRoster,}

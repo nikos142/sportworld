@@ -33,7 +33,8 @@ return(<>
  <div className="container">
      <div className="row" style={{marginTop:"30px"}}>
          <div className="col-md-3" >
-             <img className="img-responsive" style={{width:"90%"}} src={'http://localhost/f1project/teams/'+league+'/'+id+".png"}/>
+             <img className="img-responsive" style={{width:"90%"}} 
+             src={'http://localhost/f1project/teams/'+league+'/'+id+".png"}/>
          </div>
          <div className="col-md-9"> 
           <Infotabs id={id}/>

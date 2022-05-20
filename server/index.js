@@ -19,6 +19,8 @@ app.use(function(req, res, next) {
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
+/***************  FOOTBALL  ******************* */
+
 app.get("/:league", async (req, res) => {
       var league=req.params.league
       console.log(league+" teams requested")
@@ -159,6 +161,33 @@ app.get("/:league", async (req, res) => {
       }
       res.send(data)
  })
+
+/***************  TENNIS  ******************/
+app.get("/tennis/ranking", async (req, res) =>
+{
+  try{
+   var data= await database.getAtpRanking()
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+  res.send(data)
+})
+
+
+app.get("/tennis/tournaments", async (req, res) =>
+{
+  try{
+   var data= await database.getAtpTournaments()
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+  res.send(data)
+})
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

@@ -41,7 +41,35 @@ const PlayerObject = {
     name:"",
     foot:"",
     nationality:"",
-    worth:""
+    worth:"",
+    position:"",
 }
 
-module.exports ={ResultObject, factsObject, FixtureObject, TransferObject, PlayerObject}
+const TennisPlayerObject = {
+    id:"",
+    name:"",
+    age:"",
+    hand:"",
+    nationality:"",
+    atp_rank:"",
+}
+
+const TournamentObject = {
+    id:"",
+    name:"",
+    country:"",
+    type:"",
+    surface:"",
+    start:"",
+    end:""
+}
+
+module.exports ={
+                ResultObject, 
+                factsObject, 
+                FixtureObject, 
+                TransferObject,
+                PlayerObject,
+                TennisPlayerObject,
+                TournamentObject
+                }
