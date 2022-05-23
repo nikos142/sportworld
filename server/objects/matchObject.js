@@ -29,4 +29,16 @@ const transferObject={
     date:""
 }
 
-module.exports ={matchObject, factsObject,  transferObject}
+const tennisMatchObject={
+    id:"",
+    tour:"",
+    player1:"",
+    player2:"",
+    done:"",
+    player1_sets:"",
+    player2_sets:"",
+    date:"",
+    time:""
+}
+
+module.exports ={matchObject, factsObject,  transferObject , tennisMatchObject}

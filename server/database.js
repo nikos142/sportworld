@@ -93,10 +93,22 @@ async function getScorer(id)  {
 
 
 /***************  TENNIS  ******************/
-async function getAtpRanking()  {
-  let sql = "SELECT * FROM tennis_players  order by atp_rank ASC"
-  const [rows, fields] = await promisePool.execute(sql);
+async function getAtpRanking(gender)  {
+  let sql = "SELECT * FROM tennis_players WHERE gender=? order by atp_rank ASC"
+  const [rows, fields] = await promisePool.execute(sql, [gender]);
   return rows
+}
+
+async function getTennisPlayer(id)  {
+  let sql = "SELECT * FROM tennis_players WHERE id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+
+async function getTennisPlayerName(id)  {
+  let sql = "SELECT fname, lname FROM tennis_players WHERE id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows[0].fname+" "+rows[0].lname
 }
 
 async function getAtpTournaments()  {
@@ -105,4 +117,25 @@ async function getAtpTournaments()  {
   return rows
 }
 
-  module.exports={getAtpTournaments,getAtpRanking, getTransfers,getScorer,getMatchFacts, getPlayer, getRules, getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, getLeagueById, getLeague , getLeagueTeams, getTeamsRoster,}
+async function getMatchesByTournament(id)  {
+  let sql = "SELECT * FROM tennis_matches  WHERE tour_id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+
+async function getTournament(id)  {
+  let sql = "SELECT name  FROM atp_tour  WHERE id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows[0].name
+}
+
+async function getPlayersMatches(id)  {
+  let sql = "SELECT * FROM tennis_matches  WHERE player1_id=? OR player2_id=? order by date DESC"
+  const [rows, fields] = await promisePool.execute(sql, [id, id]);
+  return rows
+}
+
+  module.exports={getTennisPlayer,getTennisPlayerName, getPlayersMatches, getMatchesByTournament, getAtpTournaments,getAtpRanking, getTournament,
+                  getTransfers,getScorer,getMatchFacts, getPlayer, getRules, 
+                  getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, 
+                  getLeagueById, getLeague , getLeagueTeams, getTeamsRoster,}

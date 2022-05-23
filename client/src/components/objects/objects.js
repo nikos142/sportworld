@@ -64,7 +64,18 @@ const TournamentObject = {
     end:""
 }
 
+const TennisMatchObject={
+    id:"",
+    player1:"",
+    player2:"",
+    tour:"",
+    score:"",
+    date:"",
+    time:""
+}
+
 module.exports ={
+                TennisMatchObject,
                 ResultObject, 
                 factsObject, 
                 FixtureObject, 

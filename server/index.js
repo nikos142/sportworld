@@ -1,10 +1,9 @@
 const express = require("express");
-const { jsonp } = require("express/lib/response");
 const PORT = process.env.PORT || 3000;
 const app = express();
 const path = require("path");
 const database = require("./database.js")
-const {matchObject, factsObject, transferObject}=require("./objects/matchObject")
+const {matchObject, factsObject, transferObject, tennisMatchObject} = require("./objects/matchObject")
 
 
 
@@ -166,13 +165,49 @@ app.get("/:league", async (req, res) => {
 app.get("/tennis/ranking", async (req, res) =>
 {
   try{
-   var data= await database.getAtpRanking()
+   var atpdata= await database.getAtpRanking("male")
+   var watpdata = await database.getAtpRanking("female")
   }
   catch(error)
   {
     console.log(error)
   }
-  res.send(data)
+  res.send({atp:atpdata, watp:watpdata})
+})
+
+app.get("/tennis/profile/:id", async (req, res) =>
+{
+  var id=req.params.id
+  try{
+   var data= await database.getTennisPlayer(id)
+   var tempmatches = await database.getPlayersMatches(id)
+   var matches=[]
+   for (i in tempmatches)
+   {
+     const obj=Object.create(tennisMatchObject)
+     obj.id=tempmatches[i].id
+     obj.date=tempmatches[i].date
+     obj.done=tempmatches[i].done
+     obj.tour= await database.getTournament(tempmatches[i].tour_id)
+     obj.player1= await database.getTennisPlayerName(tempmatches[i].player1_id)
+     obj.player2= await database.getTennisPlayerName(tempmatches[i].player2_id)
+     obj.player1_sets=tempmatches[i].player1_sets
+     obj.player2_sets=tempmatches[i].player2_sets
+     var date=new Date(tempmatches[i].date)
+     obj.date = date.getDate() +"-"+parseInt(date.getMonth()+1)+"-"+date.getFullYear()
+     var minutes=date.getMinutes()
+     if(minutes<10){
+         minutes="0"+minutes
+     }
+     obj.time=date.getHours()+":"+minutes
+     matches.push(obj)   
+   }
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+  res.send({profile:data , matches:matches})
 })
 
 

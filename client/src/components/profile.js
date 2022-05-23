@@ -18,7 +18,6 @@ React.useEffect(() =>{
         url: "http://localhost:3001/profile/"+id,
     })
     .then(response =>{
-        console.log(response.data)
        setFname(response.data[0].fname)
        setLname(response.data[0].lname)
        setStadium(response.data[0].stadium)
