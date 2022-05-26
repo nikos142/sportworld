@@ -15,6 +15,7 @@ import LaLiga from "./pages/laliga";
 import Bundesliga from "./pages/bundesliga";
 import Profile from "./components/profile";
 import TennisPlayer from "./components/tennisPlayer";
+import Formula1driver from "./components/formula1driver";
 import Player from "./components/player";
 import Ligue1 from "./pages/ligue1";
 
@@ -39,10 +40,11 @@ function App() {
     <Route exact path="/football/serieA" element={<SerieA/>}/>
     <Route exact path="/football/ligue1" element={<Ligue1/>}/>
     <Route exact path="/basketball" element={<Basketball/>}/>
-    <Route exact path="/basketball/nba" element={<Basketball/>}/>
     <Route exact path="/tennis" element={<Tennis/>}/>
     <Route exact path="/tennis/profile/:id" element={<TennisPlayer/>}/>
     <Route exact path="/formula1" element={<Formula1/>}/>
+    <Route exact path="/formula1/profile/:id" element={<Formula1driver/>}/>
+    <Route exact path="/formula1/team/:id" element={<Formula1/>}/>
     <Route exact path="/motogp" element={<Motogp/>}/>
     <Route exact path="/"  element={<Index/>} />
 </Routes>

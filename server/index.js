@@ -3,7 +3,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const path = require("path");
 const database = require("./database.js")
-const {matchObject, factsObject, transferObject, tennisMatchObject} = require("./objects/matchObject")
+const {matchObject, factsObject, transferObject, tennisMatchObject, DriverObject} = require("./objects/matchObject")
 
 
 
@@ -20,7 +20,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 /***************  FOOTBALL  ******************* */
 
-app.get("/:league", async (req, res) => {
+app.get("/football/:league", async (req, res) => {
       var league=req.params.league
       console.log(league+" teams requested")
       try
@@ -35,7 +35,7 @@ app.get("/:league", async (req, res) => {
         res.send(teams)
   })
 
-  app.get("/matches/:id", async (req, res) => {
+  app.get("/football/matches/:id", async (req, res) => {
     var id=req.params.id
     try{
      const matches= await  database.getTeamsMatches(id)
@@ -85,7 +85,7 @@ app.get("/:league", async (req, res) => {
           }  
     })
 
-  app.get("/profile/:id", async (req, res) => {
+  app.get("/football/team/profile/:id", async (req, res) => {
         var id=req.params.id
         try{
               var profile= await database.getTeamsProfile(id);
@@ -97,7 +97,7 @@ app.get("/:league", async (req, res) => {
           res.send(profile)
     })
 
-    app.get("/players/:id" , async (req, res) => {
+    app.get("/football/players/:id" , async (req, res) => {
       var id=req.params.id
       try{
         var players= await database.getTeamsRoster(id)
@@ -109,7 +109,7 @@ app.get("/:league", async (req, res) => {
           res.send(players)
      })
      
-     app.get("/player/:id" , async (req, res) => {
+     app.get("/football/player/:id" , async (req, res) => {
       var id=req.params.id
       try{
         var player= await database.getPlayer(id)
@@ -121,7 +121,7 @@ app.get("/:league", async (req, res) => {
           res.send(player)
      })
 
- app.get("/rules/:id", async (req, res) => {
+ app.get("/football/rules/:id", async (req, res) => {
       var id=req.params.id
       try{
         var rules =await database.getRules(id)
@@ -133,7 +133,7 @@ app.get("/:league", async (req, res) => {
       res.send(rules)
  })
  
- app.get("/transfers/:id", async (req, res) =>
+ app.get("/football/transfers/:id", async (req, res) =>
  {
    var id=req.params.id
   
@@ -223,6 +223,44 @@ app.get("/tennis/tournaments", async (req, res) =>
   res.send(data)
 })
 
+
+/***************  FORMULA 1  ******************/
+app.get("/formula1/ranking", async (req, res) =>
+{
+  try{
+   var drivers= await database.getDriversRanking()
+   var teams = await database.getTeamsRanking()
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+  res.send({drivers:drivers , teams:teams})
+})
+
+app.get("/formula1/driver/profile/:id", async (req, res) =>{
+  var id=req.params.id
+  try
+  {
+    var driver = await database.getDriverById(id)
+    const obj =  Object.create(DriverObject)
+    obj.id=id
+    obj.name=driver[0].fname +" "+driver[0].lname
+    obj.age=driver[0].age
+    obj.nationality=driver[0].nationality
+    obj.height=driver[0].height
+    obj.weight=driver[0].weight
+    obj.points=driver[0].points
+    obj.team = await database.getDriversTeam(driver[0].team_id)
+    res.send(obj)
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+
+ 
+})
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

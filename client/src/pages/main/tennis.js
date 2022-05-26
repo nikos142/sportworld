@@ -7,8 +7,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import {Link} from 'react-router-dom';
+import {TennisMenu} from "../../components/submenus/tennisMenu"
 import {TabPanel, a11yProps} from "./../../helpers/functions";
-import { MDBMask, MDBView } from "mdbreact";
+import { Bottom } from '../../components/bottom';
 
 export default function Tennis(){
 
@@ -29,7 +30,7 @@ export default function Tennis(){
                 obj.id=element.id
                 obj.name =element.fname +" "+element.lname
                 obj.atp_rank= element.atp_rank
-                obj.hand= element.hand
+                obj.points = element.points
                 data.push(obj)
             })
             setATPPlayers(data)
@@ -38,7 +39,7 @@ export default function Tennis(){
                 obj.id=element.id
                 obj.name =element.fname +" "+element.lname
                 obj.atp_rank= element.atp_rank
-                obj.hand= element.hand
+                obj.points = element.points
                 data2.push(obj)
             })
             setWATPPlayers(data2)
@@ -76,6 +77,7 @@ export default function Tennis(){
       };
 
 return(<>
+<TennisMenu/>
 <div className="container">
     <div className="row" style={{ marginTop:"50px"}}>
         <div className="col-md-8">
@@ -84,14 +86,6 @@ return(<>
                     <Link to={"rollandgarros"}>
                         <Card className="bg-dark text-white" >
                             <Card.Img src="http://localhost/f1project/tennis/rolandgarros.jpg" alt="Card image"  style={{height:"250px"}}/>
-                            <Card.ImgOverlay>
-                                <Card.Title>Roland Garros</Card.Title>
-                                <Card.Text>
-                                Το Ρολάν Γκαρός ή Γαλλικό Όπεν είναι τουρνουά τένις που διεξάγεται κάθε χρόνο στο Παρίσι.
-                                Το τουρνουά διεξάγεται από το 1891.
-                                Το Ρολάν Γκαρός διεξάγεται κάθε χρόνο ανάμεσα στα τέλη Μαΐου και αρχές Ιουνίου στο Παρίσι, στο Στάδιο Ρολάν Γκαρός.
-                                </Card.Text>
-                            </Card.ImgOverlay>
                         </Card>
                     </Link>
                 </div>
@@ -99,14 +93,6 @@ return(<>
                     <Link to={"wimbledon"}>
                         <Card className="bg-dark text-white">
                             <Card.Img src="http://localhost/f1project/tennis/wimbledon.png" alt="Card image"  style={{height:"250px"}}/>
-                            <Card.ImgOverlay>
-                                <Card.Title>Wimbledon</Card.Title>
-                                <Card.Text>
-                                Το τουρνουά του Γουίμπλεντον γνωστό και ως Γουίμπλεντον είναι το παλαιότερο πρωτάθλημα στην αντισφαίριση και το πιο γνωστό. 
-                                Ξεκινάει στο τέλος Ιουνίου και ολοκληρώνεται ως τον Ιούλιο. 
-                                Η διοργάνωση λαμβάνει χώρα στις εγκαταστάσεις του All England Lawn Tennis and Croquet Club στο Γουίμπλεντον της Αγγλίας.
-                                </Card.Text>
-                            </Card.ImgOverlay>
                         </Card>
                     </Link>
                 </div>
@@ -116,14 +102,6 @@ return(<>
                     <Link to={"usopen"}>
                         <Card className="bg-dark text-white">
                             <Card.Img src="http://localhost/f1project/tennis/usopen.jpg" alt="Card image" style={{height:"250px"}} />
-                            <Card.ImgOverlay>
-                                <Card.Title>US Open</Card.Title>
-                                <Card.Text>
-                                Το Αμερικανικό Όπεν είναι ένα από τα τέσσερα συνολικά τουρνουά Γκραν Σλαμ στην αντισφαίριση, 
-                                το τελευταίο χρονικά κατά τη διάρκεια της χρονιάς, 
-                                sτο οποίο διοργανώνεται στις Ηνωμένες Πολιτείες από την Ομοσπονδία Αντισφαίρισης των Ηνωμένων Πολιτειών.
-                                </Card.Text>
-                            </Card.ImgOverlay>
                         </Card>
                     </Link>
                 </div>
@@ -131,21 +109,13 @@ return(<>
                     <Link to={"australianopen"}>
                         <Card className="bg-dark text-white">
                             <Card.Img src="http://localhost/f1project/tennis/australianopen.jpg" alt="Card image" style={{height:"250px"}} />
-                            <Card.ImgOverlay>
-                                <Card.Title>Australian Open</Card.Title>
-                                <Card.Text>
-                                Το Αυστραλιανό Όπεν είναι ένα από τα τέσσερα συνολικά τουρνουά Γκραν Σλαμ στο επαγγελματικό τένις.
-                                 Διεξάγεται κάθε χρόνο στην Αυστραλία υπό την αιγίδα της Tennis Australia, 
-                                πρώην Αυστραλιανή Ένωση της Αντισφαίρισης σε Χόρτο και ο πρώτος αγώνας έγινε σε γήπεδο κρίκετ στη Μελβούρνη το 1905.
-                                </Card.Text>
-                            </Card.ImgOverlay>
                         </Card>
                     </Link>
                 </div>
             </div>
         </div>
         <div className="col-md-4">
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' ,marginTop:"-60px" }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' ,marginTop:"-15px" }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="ATP Ranking" {...a11yProps(0)} />
                     <Tab label="WATP Ranking" {...a11yProps(1)} />
@@ -159,7 +129,7 @@ return(<>
                                                                       sx={{ width: 50, height: 50 }} 
                                                                       src={"http://localhost/f1project/tennis/avatars/"+item.id+".jpg" }/></td>
                                                           <td><Link className="link" to={"profile/"+item.id}>{item.name}</Link></td>
-                                                          <td>{item.atp_rank}</td>
+                                                          <td>{item.points}</td>
                                                       </tr>))}
                     </tbody>
                 </table>
@@ -172,7 +142,7 @@ return(<>
                                                                       sx={{ width: 50, height: 50 }} 
                                                                       src={"http://localhost/f1project/tennis/avatars/"+item.id+".jpg" }/></td>
                                                           <td><Link className='link' to={"profile/"+item.id}>{item.name}</Link></td>
-                                                          <td>{item.atp_rank}</td>
+                                                          <td>{item.points}</td>
                                                       </tr>))}
                     </tbody>
                 </table>
@@ -180,5 +150,6 @@ return(<>
         </div>
     </div>
 </div>
+<Bottom/>
 </>)}
 

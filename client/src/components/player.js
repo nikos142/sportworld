@@ -9,7 +9,7 @@ export default function Player (){
     React.useEffect(()=>{
         axios({
             method: 'GET',
-            url: "http://localhost:3001/player/"+id
+            url: "http://localhost:3001/football/player/"+id
         })
         .then((response) =>{
                  var obj =Object.create(PlayerObject)

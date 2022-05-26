@@ -50,13 +50,13 @@ async function getTeamById(id)  {
 }
 
 async function getLeagueById(id)  {
-  let sql = "Select name from leagues where id=?";
+  let sql = "Select name from football_leagues where id=?";
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows[0].name;
 }
 
 async function getLeague(league) {
- let sql = 'Select id from leagues where reference=?';
+ let sql = 'Select id from football_leagues where reference=?';
   const [rows, fields] = await promisePool.execute(sql, [league]);
   return rows[0].id;
 }
@@ -135,7 +135,35 @@ async function getPlayersMatches(id)  {
   return rows
 }
 
-  module.exports={getTennisPlayer,getTennisPlayerName, getPlayersMatches, getMatchesByTournament, getAtpTournaments,getAtpRanking, getTournament,
-                  getTransfers,getScorer,getMatchFacts, getPlayer, getRules, 
-                  getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, 
-                  getLeagueById, getLeague , getLeagueTeams, getTeamsRoster,}
+
+
+/***************  FORMUAL 1  ******************/
+async function getDriversRanking()  {
+  let sql = "SELECT id, fname , lname , active, points FROM formula1_drivers WHERE active=1  order by points DESC"
+  const [rows, fields] = await promisePool.execute(sql);
+  return rows
+}
+
+async function getTeamsRanking()  {
+  let sql = "SELECT id,  name, points  FROM formula1_teams order by points DESC"
+  const [rows, fields] = await promisePool.execute(sql);
+  return rows
+}
+
+async function getDriverById(id)  {
+  let sql = "SELECT * FROM formula1_drivers WHERE id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+
+async function getDriversTeam(id)  {
+  let sql = "SELECT name  FROM formula1_teams where id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows[0].name
+}
+
+module.exports={getDriversTeam, getDriverById, getDriversRanking, getTeamsRanking, getTennisPlayer,getTennisPlayerName, 
+                getPlayersMatches, getMatchesByTournament, getAtpTournaments,getAtpRanking, getTournament,
+                getTransfers,getScorer,getMatchFacts, getPlayer, getRules, 
+                getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, 
+                getLeagueById, getLeague , getLeagueTeams, getTeamsRoster}

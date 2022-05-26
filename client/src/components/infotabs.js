@@ -8,30 +8,60 @@ import Popover from 'react-bootstrap/Popover';
 import React from 'react';
 import axios from 'axios';
 import {FixtureObject,PlayerObject,ResultObject, factsObject, TransferObject} from"./objects/objects.js";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+
 
 
 export default function Infotabs({id}) {
 
-const [names, setNames]= React.useState([])
+const [attackers, setAttackers]= React.useState([])
+const [midfielders, setMidfielders]= React.useState([])
+const [defenders, setDefenders]= React.useState([])
+const [goalkeepers, setGoalkeepers]= React.useState([])
 const [results, setResults]= React.useState([])
 const [fixtures, setFixtures]= React.useState([])
 const [transfers, setTransfers]= React.useState([])
+const [dense, setDense] = React.useState(true);
+
 
 
 React.useEffect(()=>{
     axios({
         method: 'GET',
-        url: "http://localhost:3001/players/"+id,
+        url: "http://localhost:3001/football/players/"+id,
     })
     .then(response =>{
-        var players=[]
+        var attackers=[]
+        var defenders=[]
+        var midfielders=[]
+        var goalkeepers=[]
          response.data.forEach((element) => {
              var obj =Object.create(PlayerObject)
              obj.id=element.id
              obj.name=element.fname+" " + element.lname
-             players.push(obj)
+             switch(element.position) {
+                case "striker":
+                   attackers.push(obj)
+                  break;
+                case "midfielder":
+                   midfielders.push(obj)
+                  break;
+                case "defender":
+                   defenders.push(obj)
+                  break;
+                case "goalkeeper":
+                   goalkeepers.push(obj)
+                  break;
+              }
           });
-          setNames(players)
+           setAttackers(attackers)
+           setDefenders(defenders)
+           setMidfielders(midfielders)
+           setGoalkeepers(goalkeepers)
     })
     .catch(error=>{
         console.log(error)
@@ -39,7 +69,7 @@ React.useEffect(()=>{
 
     axios({
         method: 'GET',
-        url: "http://localhost:3001/matches/"+id,
+        url: "http://localhost:3001/football/matches/"+id,
     })
     .then(response =>{
         var tempResults=[]
@@ -60,14 +90,13 @@ React.useEffect(()=>{
         {  
             var obj2= Object.create(ResultObject)
             obj2.id = element.id;
-            obj2.league= element.league;
+            obj2.league= element.reference;
             obj2.home_team = element.home_team;
             obj2.away_team = element.away_team;
             obj2.score = element.home_team_score + ":" +element.away_team_score;
             obj2.date=element.date;
             obj2.time = element.time;
             var tempfacts=[]
-            console.log(element.facts)
             for (var i in element.facts)
             {
                 var obj3= Object.create(factsObject)
@@ -83,7 +112,6 @@ React.useEffect(()=>{
     })
       setFixtures(tempFixtures)
       setResults(tempResults)
-      console.log(results)
     })
     .catch(error=>{
         console.log(error)
@@ -91,7 +119,7 @@ React.useEffect(()=>{
 
     axios({
         method: 'GET',
-        url: "http://localhost:3001/transfers/"+id,
+        url: "http://localhost:3001/football/transfers/"+id,
     })
     .then(response =>{
         var tempTransfers=[]
@@ -134,7 +162,54 @@ React.useEffect(()=>{
                     <Col sm={9}>
                     <Tab.Content>
                         <Tab.Pane eventKey="first">
-                        {names.map(( row ,index) => (<p><Link to={"/football/player/profile/"+row.id} >{row.name}</Link></p>) )}
+                            <List dense={dense} >
+                                {goalkeepers.map((row,index)=> (
+                                    <ListItem  key={index}>
+                                        <ListItemAvatar>
+                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
+                                        />
+                                    </ListItem>
+                                    ))}
+                            </List>
+                            <List dense={dense}>
+                                {defenders.map((row,index)=> (
+                                    <ListItem  key={index}>
+                                        <ListItemAvatar>
+                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
+                                        />
+                                    </ListItem>
+                                    ))}
+                            </List>
+                            <List dense={dense}>
+                                {midfielders.map((row,index)=> (
+                                    <ListItem  key={index}>
+                                        <ListItemAvatar>
+                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
+                                        />
+                                    </ListItem>
+                                    ))}
+                            </List>
+                            <List dense={dense}>
+                                {attackers.map((row,index)=> (
+                                    <ListItem  key={index}>
+                                        <ListItemAvatar>
+                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
+                                        />
+                                    </ListItem>
+                                    ))}
+                            </List>
                         </Tab.Pane>
                         <Tab.Pane eventKey="second">
                             {results.length>0?(<table className='table'>
@@ -162,11 +237,11 @@ React.useEffect(()=>{
                                             <Popover id={`popover`}>
                                             <Popover.Header as="h3">{`Match Facts`}</Popover.Header>
                                                 <Popover.Body>
-                                                    {item.facts.map((facts, index)=>(<p key={index}> {facts.minute} {facts.type=="goal"?<img 
-                                                                                                                                    style={{marginLeft:"5px", marginRight:"5px", width:"12px", height:"12px"}}
-                                                                                                                                    src="http://localhost/f1project/football.png"/>:<img 
-                                                                                                                                    style={{marginLeft:"5px", marginRight:"5px",width:"12px", height:"12px"}}
-                                                                                                                                    src="http://localhost/f1project/yellow_card.jpg"/>}{facts.player}</p>))}
+                                                    {item.facts.map((facts, index)=>(<p key={index}>{facts.minute} {facts.type==="goal"?<img 
+                                                                                                                    style={{marginLeft:"5px", marginRight:"5px", width:"12px", height:"12px"}}
+                                                                                                                    src="http://localhost/f1project/football.png"/>:<img 
+                                                                                                                    style={{marginLeft:"5px", marginRight:"5px",width:"12px", height:"12px"}}
+                                                                                                                    src="http://localhost/f1project/yellow_card.jpg"/>}{facts.player}</p>))}
                                                 </Popover.Body>
                                             </Popover>}>
                                             <td> {item.score}</td>
@@ -190,11 +265,11 @@ React.useEffect(()=>{
                                 </thead>
                                 <tbody>
                                 {fixtures.map(( item ,index) => (<tr key={index}>
-                                                                                <td>{index+1}</td>
-                                                                                <td>{item.home_team}</td>
-                                                                                <td>{item.away_team}</td>
-                                                                                <td>{item.date}</td>
-                                                                                <td>{item.time}</td>
+                                                                        <td>{index+1}</td>
+                                                                        <td>{item.home_team}</td>
+                                                                        <td>{item.away_team}</td>
+                                                                        <td>{item.date}</td>
+                                                                        <td>{item.time}</td>
                                                                 </tr>))}
                                 </tbody>
                         </table>):(<p>No scheduled matches</p>)}

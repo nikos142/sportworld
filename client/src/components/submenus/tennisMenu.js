@@ -6,23 +6,35 @@ export const TennisMenu = () => {
             <nav>
             <ul  className="nav  justify-content-center">
                 <li className="nav-item dropdown">
-                    <Link className="nav-link link" to="/tennis/australianOpen">Australian Open</Link>
+                    <Link className="nav-link link" to="/tennis/romeopen">BNL d'Italia</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link link" to="/tennis/USopen">Us Open</Link>
+                    <Link className="nav-link link" to="/tennis/montecarloopen">Monte-Carlo Masters</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link link" to="/tennis/wimbledon">Wimbledon</Link>
+                    <Link className="nav-link link" to="/tennis/madridopen">Madrid Open</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link link" to="/tennis/rolandGarros">Roland Garros</Link>
+                    <Link className="nav-link link" to="/tennis/paribasopen">Paribas Open</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link link" to="/tennis/shanghaimasters">Shanghai Masters</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link link" to="/tennis/westernsouthendOpen">Western & Southern Open</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link link" to="/tennis/indianwellsopen">National Bank Open</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link link" to="/tennis/miamiopen">Miami Open</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link link" to="/tennis/parismasters"> Paris Masters</Link>
                 </li>
                 <li className="nav-item">
                     <Link className="nav-link link" to="/tennis/tour">ATP Tour</Link>
                 </li>
-                <li className="nav-item">
-                    <Link className="nav-link link" to="/tennis/ranking">ATP Ranking</Link>
-                </li>   
           </ul>
           </nav>
         </div>

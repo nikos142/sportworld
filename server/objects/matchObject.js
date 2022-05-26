@@ -41,4 +41,24 @@ const tennisMatchObject={
     time:""
 }
 
-module.exports ={matchObject, factsObject,  transferObject , tennisMatchObject}
+const DriverObject = {
+    id:"",
+    name:"",
+    age:"",
+    height:"",
+    weight:"",
+    team:"",
+    points:"",
+    nationality:""
+}
+
+const FormulaTeamObject = {
+    id:"",
+    name:"",
+    country:"",
+    principal:"",
+    owner:"",
+    points:""
+}
+
+module.exports ={matchObject, factsObject,  transferObject , tennisMatchObject, DriverObject, FormulaTeamObject}

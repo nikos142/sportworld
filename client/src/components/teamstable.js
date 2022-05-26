@@ -15,7 +15,7 @@ export default function TeamsTable ({league , id}){
    
         axios({
           method:"get",
-          url: "http://localhost:3001/"+league,
+          url: "http://localhost:3001/football/"+league,
         })
        .then((response) =>{ 
          console.log(response.data)
@@ -26,7 +26,7 @@ export default function TeamsTable ({league , id}){
 
         axios({
           method:"get",
-          url: "http://localhost:3001/rules/"+id,
+          url: "http://localhost:3001/football/rules/"+id,
         })
        .then((response) =>{ 
          setRegelated(response.data[0].regelated)

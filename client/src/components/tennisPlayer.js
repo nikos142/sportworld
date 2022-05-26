@@ -69,7 +69,7 @@ export default function TennisPlayer (){
       <div className="container">
           <div className="row">
               <div className="col-md-3">
-                  <img style={{height:"300px", width:"300px", borderRadius:"50%"}}
+                  <img alt={"image"+id} style={{height:"300px", width:"300px", borderRadius:"50%"}}
                   src={"http://localhost/f1project/tennis/avatars/"+id+".jpg"} />
               </div>
               <div className="col-md-9">

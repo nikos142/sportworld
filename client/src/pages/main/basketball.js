@@ -1,6 +1,7 @@
 import React from 'react'
-import { LeagueCard } from '../../components/leagueCard'
 import { Bottom } from "../../components/bottom";
+import Card from 'react-bootstrap/Card'
+import {Link} from 'react-router-dom';
 
 export default function basketball(){
 
@@ -8,48 +9,48 @@ return(<>
 <div className="container">
     <div className="row" style={{textAlign:"center", marginTop:"30px"}}>
         <div className="col-md-4">
-            <LeagueCard 
-                url="/basketball/nba" 
-                title="NBA" 
-                img="http://localhost/f1project/nba.jpg"
-            />
+            <Link to={"nba"}>
+                <Card>
+                    <Card.Img src="http://localhost/f1project/nba.jpg" alt="Card image"  style={{height:"250px"}}/>
+                </Card>
+            </Link>
         </div>
         <div className="col-md-4">
-            <LeagueCard  
-                url="/basketball/euroleague" 
-                title="Euroleague" 
-                img="http://localhost/f1project/euroleague.png"
-            />
+        <Link to={"euroleague"}>
+            <Card>
+                <Card.Img src="http://localhost/f1project/euroleague.png" alt="Card image"  style={{height:"250px"}}/>
+            </Card>
+        </Link>
         </div>
         <div className="col-md-4">
-            <LeagueCard  
-                url="/basketball/eurocup"  
-                title="Eurocup" 
-                img="http://localhost/f1project/eurocup.png"
-            />
+            <Link to={"eurocup"}>
+                <Card>
+                    <Card.Img src="http://localhost/f1project/eurocup.png" alt="Card image"  style={{height:"250px"}}/>
+                </Card>
+            </Link>
         </div>
     </div>
-    <div className="row" style={{textAlign:"center", marginTop:"30px"}}>
+    <div className="row" style={{textAlign:"center", marginTop:"50px"}}>
         <div className="col-md-4" > 
-            <LeagueCard  
-                url="/basketball/acb"  
-                title="ACB" 
-                img="http://localhost/f1project/acb.jpg"
-            />
+            <Link to={"acb"}>
+                <Card>
+                    <Card.Img src="http://localhost/f1project/acb.jpg" alt="Card image"  style={{height:"250px"}}/>
+                </Card>
+            </Link>
         </div>
         <div className="col-md-4">
-            <LeagueCard  
-                url="/basketball/bbl" 
-                title="BBL" 
-                img="http://localhost/f1project/bbl.png" 
-            />
+        <Link to={"bbl"}>
+                <Card>
+                    <Card.Img src="http://localhost/f1project/bbl.png" alt="Card image"  style={{height:"250px"}}/>
+                </Card>
+            </Link>
         </div>
         <div className="col-md-4">
-            <LeagueCard  
-                url="/basketball/lnb"   
-                title="LNB" 
-                img="http://localhost/f1project/lnb.jpg"
-            />
+        <Link to={"lnb"}>
+            <Card>
+                <Card.Img src="http://localhost/f1project/lnb.jpg" alt="Card image"  style={{height:"250px"}}/>
+            </Card>
+        </Link>
         </div>
     </div>
 </div>

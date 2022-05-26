@@ -52,6 +52,7 @@ const TennisPlayerObject = {
     hand:"",
     nationality:"",
     atp_rank:"",
+    points:""
 }
 
 const TournamentObject = {
@@ -74,7 +75,29 @@ const TennisMatchObject={
     time:""
 }
 
+
+const DriverObject = {
+    id:"",
+    name:"",
+    age:"",
+    height:"",
+    weight:"",
+    team:"",
+    points:"",
+    nationality:""
+}
+
+const FormulaTeamObject = {
+    id:"",
+    name:"",
+    country:"",
+    principal:"",
+    owner:"",
+    points:""
+}
 module.exports ={
+                FormulaTeamObject,
+                DriverObject,
                 TennisMatchObject,
                 ResultObject, 
                 factsObject, 
