@@ -57,8 +57,13 @@ export default function Formula1driver (){
                     <table className="table">
                         <tbody>
                             {previousRaces.map((item , index)=>(<tr key={index}>
-                                <td>{item.tour}</td><td>{item.player1}</td><td>{item.player2}</td><td>{item.date}</td><td>{item.time}</td><td>{item.score}</td>
-                            </tr>))}
+                                                                    <td>{item.tour}</td>
+                                                                    <td>{item.player1}</td>
+                                                                    <td>{item.player2}</td>
+                                                                    <td>{item.date}</td>
+                                                                    <td>{item.time}</td>
+                                                                    <td>{item.score}</td>
+                                                                </tr>))}
                         </tbody>
                     </table>
                 </TabPanel>

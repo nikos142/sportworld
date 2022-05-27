@@ -11,6 +11,31 @@ const connection =  mysql.createPool({
   
   const promisePool = connection.promise();
 
+
+/******************  USERS  ******************/ 
+async function getUserByEmail(email){
+let sql = "Select * from users where email=?"
+const [rows, fields] = await promisePool.execute(sql, [email]);
+return rows;
+}
+
+async function getUserById(id){
+  let sql = "Select * from users where id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows;
+  }
+async function insertUser(email , pswd){
+  let sql = "Insert into  users (email, password) values (?,? )"
+  const [rows, fields] = await promisePool.execute(sql, [email, pswd]);
+  return rows;
+  }
+
+  async function updateUserToken(token , id){
+    let sql = "Update users SET token = ? WHERE id = ?"
+    const [rows, fields] = await promisePool.execute(sql, [token , id]);
+    return rows;
+    }
+
   /***************  FOOTBALL  ******************* */
 
  async function getLeagueTeams(id)  {
@@ -162,7 +187,7 @@ async function getDriversTeam(id)  {
   return rows[0].name
 }
 
-module.exports={getDriversTeam, getDriverById, getDriversRanking, getTeamsRanking, getTennisPlayer,getTennisPlayerName, 
+module.exports={ updateUserToken, getUserById, getUserByEmail,insertUser, getDriversTeam, getDriverById, getDriversRanking, getTeamsRanking, getTennisPlayer,getTennisPlayerName, 
                 getPlayersMatches, getMatchesByTournament, getAtpTournaments,getAtpRanking, getTournament,
                 getTransfers,getScorer,getMatchFacts, getPlayer, getRules, 
                 getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById, 

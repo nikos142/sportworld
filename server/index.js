@@ -1,20 +1,145 @@
+require('dotenv/config')
 const express = require("express");
-const PORT = process.env.PORT || 3000;
+const cookieParser = require('cookie-parser')
+const cors=require('cors');
+const {verify} = require ('jsonwebtoken')
+const {hash , compare } = require ('bcryptjs')
+const PORT = process.env.PORT
 const app = express();
 const path = require("path");
 const database = require("./database.js")
-const {matchObject, factsObject, transferObject, tennisMatchObject, DriverObject} = require("./objects/matchObject")
+const {matchObject, factsObject, transferObject, tennisMatchObject, DriverObject} = require("./objects/matchObject");
+const {createAccessToken, createRefreshToken , sendAccessToken, sendRefreshToken} = require("./tokens.js")
+const {isAuth} =require('./isAuth');
+const res = require('express/lib/response');
+app.use(cookieParser());
+
+//cookie handling
+app.use(
+  cors({
+    origin:"http://localhost:3000",
+    credentials:true,
+  })
+)
 
 
+//ability to read body data
+app.use(express.json()); //support JSON-encoded bodies
+app.use(express.urlencoded({extended:true})); //support Url-encoded bodies
 
-app.use(function(req, res, next) {
+ //REGISTER USERS 
+  app.post('/register', async (req , res) => {
+    const {email, password} = req.body;
+     try
+     {
+      var account = await database.getUserByEmail(email)
+      if(account[0]!==undefined){
+        var status="User Exists" 
+      }
+      else{
+        const hashedPassword = await hash(password,10) 
+        await database.insertUser(email, hashedPassword)
+        var status ="user inserted"
+      }
+     }
+     catch(error){
+          console.log(error)
+     }
+     res.send(status)
+  })
+
+
+//  LOGIN USERS
+  app.post("/login", async (req, res) => {
+    const {email, password} = req.body;
+    var status=""
+    if(email!==undefined && password!== undefined)
+    {
+    try
+    {
+      var account = await database.getUserByEmail(email)
+      if(account[0]===undefined) throw new Error("User does not exist")
+       const valid= await compare(password, account[0].password)
+       if(!valid) throw new Error("Password is incorrect")
+       const accesstoken =  createAccessToken(account[0].id)
+       const refreshtoken= createRefreshToken(account[0].id)
+       await database.updateUserToken(refreshtoken ,account[0].id)
+       sendRefreshToken(res , refreshtoken)
+       sendAccessToken(res, req, accesstoken)
+          }
+    catch(error){
+      console.log(error)
+    }
+  }
+  else{
+    status = "Username and password are empty"
+    res.send(status)
+  }
+  })
+
+
+//LOGOUT USERS
+
+app.post('/logout', (req, res) => {
+  res.clearCookie('refreshtoken' , {path:'/refresh_token'})
+  return res.send({
+    message:"Logged out" 
+  }) 
+})
+
+//ROUTE WITH AUTH
+app.post('/protected', async (req, res)=>
+{
+  try{
+    const userId = isAuth(req)
+    if(userId!==null){
+      res.send({
+        data:'this is protected'
+      })
+    }
+  }
+  catch(error)
+  {
+     console.log(error)
+     res.send({message:error.message})
+  }
+})
+
+
+//GET NEW ACCESTOKEN WITH A REFRESH TOKEN
+app.post('/refresh_token', async (req, res) => {
+  const token = req.cookies.refreshtoken
+  if(!token) return res.send({accesstoken:""})
+  let payload=null
+  try{
+       payload = verify(token, process.env.REFRESH_TOKEN_SECRET)
+  }
+  catch(error)
+  {
+     return  res.send({accesstoken: ""})
+  }
+  //IF WE GET VALID TOKEN  CHECKS USER 
+  const user= await database.getUserById(payload.id)
+  //IF USER EXISTS  CHECKS IF REFRESH_TOKEN EXISTS FOR USER
+  if(!user[0]) return res.send({accesstoken:''})
+  if(user[0].token!== token)
+  {
+    return  res.send({accesstoken:''})
+  }
+  const accesstoken= createAccessToken(user[0].id)
+  const refreshtoken= createRefreshToken(user[0].id)
+  await database.updateUserToken(refreshtoken ,user[0].id)
+  sendRefreshToken(res, refreshtoken)
+   res.send({accesstoken})
+})
+/*app.use(function(req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*")
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Max-Age", "1800");
   res.setHeader("Access-Control-Allow-Headers", "content-type");
   res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
   next();
-});
+});*/
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
