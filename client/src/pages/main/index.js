@@ -3,6 +3,7 @@ import { Bottom } from '../../components/bottom'
 import Carousel from 'react-bootstrap/Carousel'
 
 
+
 export default function Index (){
    
 

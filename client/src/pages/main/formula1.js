@@ -1,4 +1,4 @@
-import React from 'react'
+import React  from 'react'
 import Card from 'react-bootstrap/Card'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -11,9 +11,12 @@ import { Bottom } from '../../components/bottom';
 import { DriverObject , FormulaTeamObject} from '../../components/objects/objects';
 
 export default function Formula1(){
+
+   
         const [value, setValue] = React.useState(0);
         const [drivers, setDrivers]= React.useState([])
         const [teams, setTeams]= React.useState([])
+      
         React.useEffect(() =>{
                 axios({
                     method: 'GET',
@@ -43,7 +46,7 @@ export default function Formula1(){
                     console.log(error)
                 })
         },[])
-
+    
         const handleChange = (event, newValue) => {
                 setValue(newValue);
               };

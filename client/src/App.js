@@ -5,7 +5,6 @@ import {BrowserRouter as Router, Route,Routes} from 'react-router-dom';
 import Basketball from "./pages/main/basketball";
 import Football from "./pages/main/football";
 import Formula1 from "./pages/main/formula1";
-import Motogp from "./pages/main/motogp";
 import Tennis from "./pages/main/tennis";
 import PremierLeague from "./pages/premierLeague";
 import SerieA from "./pages/serieA";
@@ -18,14 +17,53 @@ import TennisPlayer from "./components/tennisPlayer";
 import Formula1driver from "./components/formula1driver";
 import Player from "./components/player";
 import Ligue1 from "./pages/ligue1";
+import MatchDetails from "./components/matchdetails";
 
 
 
+export const UserContext = React.createContext([])
 
 function App() {
-  React.useEffect(() => { document.body.style.backgroundColor = '#EFEFEE'}, [])
+  const [user, setUser]= React.useState({})
+  const [loading , setLoading] = React.useState(true)
+
+  const logOutCallback = async () =>{
+
+    await fetch('/logout' , {
+      method: 'POST',
+      credentials:"include",
+    })
+
+    setUser({})
+    window.location.replace('/')
+
+  }
+
+  React.useEffect(() => { 
+    document.body.style.backgroundColor = '#EFEFEE'
+  
+    async function checkRefreshToken(){
+      const result =await (await fetch('http://localhost:3001/refresh_token' , {
+        method:`Post`,
+        credentials:'include',
+        headers:{
+            'Content-Type': 'application/json'
+
+        }
+    } ) ).json();
+      
+      setUser({
+        accesstoken: result.accesstoken
+      })
+      setLoading(false)
+    }
+    checkRefreshToken()
+  }, [])
+
+
   return (
-    <Router>
+    <UserContext.Provider value={[user , setUser]}>
+    <Router id="router">
     <div className="App">
         <Header></Header>
     </div>
@@ -33,6 +71,7 @@ function App() {
 <Routes>
     <Route exact path="/football" element={<Football/>}/>
     <Route exact path="/football/player/profile/:id" element={<Player/>}/>
+    <Route exact path="/football/match/details/:id" element={<MatchDetails/>}/>
     <Route exact path="/football/premierleague" element={<PremierLeague/>}/>
     <Route exact path="/football/:league/:id"  element={<Profile/>} />
     <Route exact path="/football/laliga" element={<LaLiga/>}/>
@@ -45,10 +84,10 @@ function App() {
     <Route exact path="/formula1" element={<Formula1/>}/>
     <Route exact path="/formula1/profile/:id" element={<Formula1driver/>}/>
     <Route exact path="/formula1/team/:id" element={<Formula1/>}/>
-    <Route exact path="/motogp" element={<Motogp/>}/>
     <Route exact path="/"  element={<Index/>} />
 </Routes>
 </Router>
+</UserContext.Provider>
   );
 }
 

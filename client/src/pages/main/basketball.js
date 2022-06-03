@@ -3,8 +3,8 @@ import { Bottom } from "../../components/bottom";
 import Card from 'react-bootstrap/Card'
 import {Link} from 'react-router-dom';
 
-export default function basketball(){
-
+export default function Basketball(){
+   
 return(<>
 <div className="container">
     <div className="row" style={{textAlign:"center", marginTop:"30px"}}>

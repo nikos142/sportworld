@@ -1,10 +1,11 @@
-import React from 'react'
+import React  from 'react'
 import { Bottom } from '../../components/bottom'
 import Card from 'react-bootstrap/Card'
 import {Link} from 'react-router-dom';
 
 
-export default function football(){
+
+export default function Football(){
 
 return(<>
 <div className="container">

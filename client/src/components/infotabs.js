@@ -13,6 +13,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
+import Button from 'react-bootstrap/Button'
 
 
 
@@ -72,6 +73,7 @@ React.useEffect(()=>{
         url: "http://localhost:3001/football/matches/"+id,
     })
     .then(response =>{
+        console.log(response.data)
         var tempResults=[]
         var tempFixtures=[]
     response.data.forEach((element) =>{
@@ -129,6 +131,7 @@ React.useEffect(()=>{
                     obj.player= element.player;
                     obj.from= element.from;
                     obj.to = element.to;
+                    obj.fee= element.fee;
                     obj.date=element.date;
                     tempTransfers.push(obj)
         })
@@ -221,6 +224,7 @@ React.useEffect(()=>{
                                         <th>Score</th>
                                         <th>Date</th>
                                         <th>Time</th>
+                                        <th>Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -237,17 +241,22 @@ React.useEffect(()=>{
                                             <Popover id={`popover`}>
                                             <Popover.Header as="h3">{`Match Facts`}</Popover.Header>
                                                 <Popover.Body>
-                                                    {item.facts.map((facts, index)=>(<p key={index}>{facts.minute} {facts.type==="goal"?<img 
-                                                                                                                    style={{marginLeft:"5px", marginRight:"5px", width:"12px", height:"12px"}}
-                                                                                                                    src="http://localhost/f1project/football.png"/>:<img 
-                                                                                                                    style={{marginLeft:"5px", marginRight:"5px",width:"12px", height:"12px"}}
-                                                                                                                    src="http://localhost/f1project/yellow_card.jpg"/>}{facts.player}</p>))}
+                                                    {item.facts.map((facts, index)=>(<p key={index}>{facts.minute} {facts.type==="owngoal"&&(<img className="factIcons"
+                                                                                                                    src="http://localhost/f1project/owngoal.jpg"/>)||
+                                                                                                                    facts.type==="goal"&&(<img  className="factIcons"
+                                                                                                                    src="http://localhost/f1project/football.png"/>)||
+                                                                                                                    facts.type==="yellow card"&&(<img className="factIcons"
+                                                                                                                    src="http://localhost/f1project/yellow_card.jpg"/>)||
+                                                                                                                    facts.type==="red card"&&(<img className='factIcons'
+                                                                                                                    src="http://localhost/f1project/red_card.png"/>)}{facts.player}
+                                                                                     </p>))}
                                                 </Popover.Body>
                                             </Popover>}>
                                             <td> {item.score}</td>
                                         </OverlayTrigger>
                                         <td>{item.date}</td>
                                         <td>{item.time}</td>
+                                        <td><Link to={"/football/match/details/"+item.id}><Button>View</Button></Link></td>
                                     </tr>) )}
                                 </tbody>
                             </table>):(<p>No results</p>)}
@@ -275,7 +284,32 @@ React.useEffect(()=>{
                         </table>):(<p>No scheduled matches</p>)}
                     </Tab.Pane>
                     <Tab.Pane eventKey="fourth">
-                        {JSON.stringify(transfers)}
+                    {transfers.length>0 ?(<table className='table'>
+                                <thead>
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>From</th>
+                                        <th></th>
+                                        <th>To</th>
+                                        <th>Fee</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {transfers.map(( item ,index) => (<tr key={index}>
+                                                                        <td>{item.player}</td>
+                                                                        <td>{item.from}</td>
+                                                                        <td>
+                                                                            <img style={{width:"15px"}}
+                                                                                 src="http://localhost/f1project/arrow.png">
+                                                                            </img>
+                                                                        </td>
+                                                                        <td>{item.to}</td>
+                                                                        <td>{item.fee}</td>
+                                                                        <td>{item.date}</td>
+                                                                </tr>))}
+                                </tbody>
+                        </table>):(<p>No scheduled matches</p>)}
                     </Tab.Pane>
                     </Tab.Content>
                     </Col>

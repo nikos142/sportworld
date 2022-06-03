@@ -13,10 +13,12 @@ import { Bottom } from '../../components/bottom';
 
 export default function Tennis(){
 
+
     const [ATPplayers, setATPPlayers]= React.useState([])
     const [WATPplayers, setWATPPlayers]= React.useState([])
     const [tour , setTour] = React.useState([])
     const [value, setValue] = React.useState(0);
+
     React.useEffect(() =>{
         axios({
             method: 'GET',

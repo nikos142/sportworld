@@ -15,7 +15,7 @@ const [owner, setOwner] = React.useState()
 React.useEffect(() =>{
     axios({
         method: 'GET',
-        url: "http://localhost:3001/profile/"+id,
+        url: "http://localhost:3001/football/team/profile/"+id,
     })
     .then(response =>{
        setFname(response.data[0].fname)
@@ -40,7 +40,7 @@ return(<>
          </div>
      </div>
      <div className="row" style={{marginTop:"30px"}}>
-         <div className="col-md-3" >
+         <div className="col-md-3">
              <p><b>Town:</b> {town}</p>
              <p><b>Stadium:</b> {stadium}</p>
              <p><b>Owner:</b> {owner}</p>

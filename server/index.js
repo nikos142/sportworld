@@ -8,11 +8,18 @@ const PORT = process.env.PORT
 const app = express();
 const path = require("path");
 const database = require("./database.js")
+const  stats= require("./statsController.js")
 const {matchObject, factsObject, transferObject, tennisMatchObject, DriverObject} = require("./objects/matchObject");
 const {createAccessToken, createRefreshToken , sendAccessToken, sendRefreshToken} = require("./tokens.js")
 const {isAuth} =require('./isAuth');
-const res = require('express/lib/response');
 app.use(cookieParser());
+var cron = require('node-cron');
+
+cron.schedule('0 0 * * * *',  () => {
+    stats.updatePlayerStats()
+    stats.updateTeamStats()
+});
+
 
 //cookie handling
 app.use(
@@ -28,7 +35,7 @@ app.use(express.json()); //support JSON-encoded bodies
 app.use(express.urlencoded({extended:true})); //support Url-encoded bodies
 
  //REGISTER USERS 
-  app.post('/register', async (req , res) => {
+app.post('/register', async (req , res) => {
     const {email, password} = req.body;
      try
      {
@@ -50,7 +57,7 @@ app.use(express.urlencoded({extended:true})); //support Url-encoded bodies
 
 
 //  LOGIN USERS
-  app.post("/login", async (req, res) => {
+app.post("/login", async (req, res) => {
     const {email, password} = req.body;
     var status=""
     if(email!==undefined && password!== undefined)
@@ -79,7 +86,6 @@ app.use(express.urlencoded({extended:true})); //support Url-encoded bodies
 
 
 //LOGOUT USERS
-
 app.post('/logout', (req, res) => {
   res.clearCookie('refreshtoken' , {path:'/refresh_token'})
   return res.send({
@@ -132,35 +138,27 @@ app.post('/refresh_token', async (req, res) => {
   sendRefreshToken(res, refreshtoken)
    res.send({accesstoken})
 })
-/*app.use(function(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*")
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Max-Age", "1800");
-  res.setHeader("Access-Control-Allow-Headers", "content-type");
-  res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
-  next();
-});*/
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 /***************  FOOTBALL  ******************* */
-
 app.get("/football/:league", async (req, res) => {
-      var league=req.params.league
-      console.log(league+" teams requested")
-      try
-      {
-        var league_id =await database.getLeague(league)
-        var teams =await database.getLeagueTeams(league_id)
-      }
-        catch(error)
-        {
-          console.log(error)
-        }
-        res.send(teams)
-  })
+  var league=req.params.league
+  console.log(league+" teams requested")
+  try
+    {
+      var league_id =await database.getLeague(league)
+      var teams =await database.getLeagueTeams(league_id)
+      var stats = await database.getTeamStatsByLeague(league_id)
+    }
+  catch(error)
+    {
+      console.log(error)
+    }
+    res.send({teams:teams , stats:stats})
+})
 
-  app.get("/football/matches/:id", async (req, res) => {
+app.get("/football/matches/:id", async (req, res) => {
     var id=req.params.id
     try{
      const matches= await  database.getTeamsMatches(id)
@@ -184,7 +182,7 @@ app.get("/football/:league", async (req, res) => {
             var score  = await database.getMatchScore(matches[i].id)
             obj.home_team_score = score[0].home_team_score
             obj.away_team_score = score[0].away_team_score
-            var facts= await database.getMatchFacts(matches[i].id)
+            var facts= await database.getFacts(matches[i].id)
             var tempfacts=[]
            for( j in facts )
             {  
@@ -208,33 +206,51 @@ app.get("/football/:league", async (req, res) => {
           {
             console.log(error)
           }  
-    })
+})
 
-  app.get("/football/team/profile/:id", async (req, res) => {
-        var id=req.params.id
-        try{
-              var profile= await database.getTeamsProfile(id);
-          }
-          catch(error)
-          {
-            console.log(error)
-          }
-          res.send(profile)
-    })
+app.get("/football/match/lineups/:id", async (req, res) => {
+  var id=req.params.id
+  var lineups = await database.getMatchLineups(id)
+  var pid=JSON.stringify(lineups[0].lineups.away)
+  var arr= Array.from(pid)
+  arr.shift()
+  arr.pop()
+  var players=[]
+  for(i in arr)
+  {
+    var player=await database.getPlayer(arr[i])
+    players.push({name:player.fname+" "+player.lname , 
+                  position:player.position})
+  }
+ res.send(players)
+})
 
-    app.get("/football/players/:id" , async (req, res) => {
-      var id=req.params.id
-      try{
+app.get("/football/team/profile/:id", async (req, res) => {
+    var id=req.params.id
+    try{
+        var profile= await database.getTeamsProfile(id);
+       }
+    catch(error)
+      {
+        console.log(error)
+      }
+      res.send(profile)
+})
+
+app.get("/football/players/:id" , async (req, res) => {
+   var id=req.params.id
+   try
+      {
         var players= await database.getTeamsRoster(id)
-          }
-          catch(error)
-          {
-            console.log(error)
-          }
-          res.send(players)
-     })
+      }
+   catch(error)
+      {
+        console.log(error)
+      }
+      res.send(players)
+})
      
-     app.get("/football/player/:id" , async (req, res) => {
+app.get("/football/player/:id" , async (req, res) => {
       var id=req.params.id
       try{
         var player= await database.getPlayer(id)
@@ -244,9 +260,9 @@ app.get("/football/:league", async (req, res) => {
             console.log(error)
           }
           res.send(player)
-     })
+})
 
- app.get("/football/rules/:id", async (req, res) => {
+app.get("/football/rules/:id", async (req, res) => {
       var id=req.params.id
       try{
         var rules =await database.getRules(id)
@@ -258,7 +274,7 @@ app.get("/football/:league", async (req, res) => {
       res.send(rules)
  })
  
- app.get("/football/transfers/:id", async (req, res) =>
+app.get("/football/transfers/:id", async (req, res) =>
  {
    var id=req.params.id
   
@@ -269,7 +285,7 @@ app.get("/football/:league", async (req, res) => {
         {
           const obj= Object.create(transferObject)
           obj.id=transfers[i].id
-          obj.fee=transfers[i].fee
+          obj.fee=transfers[i].fee+".000.000"
           var date=new Date(transfers[i].date)
           obj.date = date.getDate() +"-"+date.getMonth()+"-"+date.getFullYear()
           var player = await database.getPlayer(transfers[i].player_id)
@@ -383,8 +399,6 @@ app.get("/formula1/driver/profile/:id", async (req, res) =>{
   {
     console.log(error)
   }
-
- 
 })
 
 app.listen(PORT, () => {
