@@ -9,7 +9,13 @@ const connection =  mysql.createPool({
   });
   
 const promisePool = connection.promise();
-
+/*********** GENERAL *************/
+async function getCountryById(id)
+{
+  let sql = "Select name from countries where id=?";
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows[0];
+}
 /******************  USERS  ******************/ 
 async function getUserByEmail(email){
 let sql = "Select * from users where email=?"
@@ -36,13 +42,13 @@ async function updateUserToken(token , id){
 }
 
 /***************  FOOTBALL  ********************/
-async function getLeagueTeams(id)  {
+async function getLeagueTeams(id){
   let sql = "Select * from football_teams where league_id= ? order by points desc;"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows;
 };
 
-async function getTeamsRoster(id) {
+async function getTeamsRoster(id){
  let sql = "Select * from football_players where team_id=?"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows;
@@ -54,14 +60,20 @@ async function getTeamsProfile(id) {
   return rows;
 };
 
-async function getTeamsMatches(id) {
-  let sql = "Select * from football_matches where home_team_id= ? Or away_team_id= ?"
+async function getMatches(){
+  let sql = "Select * from football_matches where done=1 and extracted=0"
+  const [rows, fields] = await promisePool.execute(sql);
+  return rows
+}
+
+async function getTeamsMatches(id){
+  let sql = "Select * from football_matches where home_team_id= ? Or away_team_id= ?  order by date desc"
   const [rows, fields] = await promisePool.execute(sql, [id, id]);
   return rows;
 }
 
 async function getTeamStatsByLeague(id){
-  let sql ="SELECT team_id, yellow_cards, red_cards, ( goals_home + goals_away) as goals , (conceded_home + conceded_away) as conceded from football_team_stats where team_id in (SELECT id FROM `football_teams` where league_id=?)"
+  let sql ="SELECT team_id, yellow_cards, red_cards, points,  ( goals_home + goals_away) as goals , (conceded_home + conceded_away) as conceded from football_team_stats where team_id in (SELECT id FROM `football_teams` where league_id=?) order by points desc"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows
 }
@@ -78,29 +90,25 @@ async function checkTeamsStatline(id){
   }
 }
 
-async function getHomegoals(id)
-{
+async function getHomegoals(id){
   let sql = "Select SUM(home_team_score) as homegoals ,SUM(away_team_score) as concededhome from football_matches where home_team_id=? and done=1"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows
 }
 
-async function getAwaygoals(id)
-{
+async function getAwaygoals(id){
   let sql = "Select SUM(away_team_score) as awaygoals, SUM(home_team_score) as concededaway from football_matches where away_team_id=? and done=1"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows
 }
 
-async function getCards(id)
-{
+async function getCards(id){
   let sql = "SELECT SUM(yellow_cards) as yellows , SUM(red_cards) as reds  FROM `football_player_stats` where player_id in (Select id from football_players where team_id=?)"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows
 }
 
-async function checkPlayersStatline(id)
-{
+async function checkPlayersStatline(id){
   let sql = "Select player_id from football_player_stats where player_id =?"
   const [row, fields] = await promisePool.execute(sql, [id])
   if(row[0]== undefined)
@@ -110,47 +118,54 @@ async function checkPlayersStatline(id)
     return row
   }
 }
-async function getMatchScore(id)   {
+async function getMatchScore(id){
  let sql = "Select home_team_score , away_team_score from football_matches where id=?";
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows;
 }
 
-async function getTeamById(id)  {
-  let sql = "Select name from football_teams where id=?";
+async function getTeamById(id){
+  let sql = "Select name, color  from football_teams where id=?";
   const [rows, fields] = await promisePool.execute(sql, [id]);
-  return rows[0].name;
+  return rows[0];
 }
 
-async function getLeagueById(id)  {
+async function getLeagueById(id){
   let sql = "Select name from football_leagues where id=?";
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows[0].name;
 }
 
-async function getLeague(league) {
+async function getLeague(league){
  let sql = 'Select id from football_leagues where reference=?';
   const [rows, fields] = await promisePool.execute(sql, [league]);
   return rows[0].id;
 }
 
-async function getRules(id)  {
+async function getRules(id){
 let sql = "SELECT * FROM rules  WHERE id=?"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows;
 }
   
-async function getTransfers(id)  {
+async function getTeamsTransfers(id){
   let sql = "SELECT * FROM transfers   WHERE from_team= ? OR to_team=?"
   const [rows, fields] = await promisePool.execute(sql, [id, id]);
   return rows;
 }
 
-async function getPlayer(id)  {
+async function getPlayer(id){
   let sql = "SELECT * FROM football_players  WHERE  id=?"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows[0]
 }
+
+async function getPlayerStats(id){
+    let sql = "SELECT * FROM football_player_stats  WHERE  player_id=?"
+    const [rows, fields] = await promisePool.execute(sql, [id]);
+    return rows
+  }
+
 async function getFacts(id){
   let sql = "SELECT * FROM football_match_facts  WHERE  match_id=? order by minute ASC"
   const [rows, fields] = await promisePool.execute(sql, [id]);
@@ -171,6 +186,11 @@ async function getMatchLineups(id){
 
 async function getScorer(id) {
   let sql = "SELECT fname , lname, team_id FROM football_players  WHERE  id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+async function getMatchById(id) {
+  let sql = "SELECT * FROM football_matches  WHERE  id=?"
   const [rows, fields] = await promisePool.execute(sql, [id]);
   return rows
 }
@@ -203,6 +223,16 @@ async function updatePlayerStatline(type , id ){
   const [row, fields] = await promisePool.execute(updsql, [id])
 }
 
+async function updateTeamPoints(team_id , points){
+  let sql = "Update football_team_stats set points = points +"+points+" where team_id=?"
+  const [row, fields] = await promisePool.execute(sql, [team_id])
+}
+
+async function updateMatchStatus(id){
+  let sql = "Update football_matches set extracted=1 where id=?"
+  const [row, fields] = await promisePool.execute(sql, [id])
+}
+
 async function updateMatchFactStatus(id){
     let sql = "Update football_match_facts set extracted=1 where id=?";
     const [row, field] = await promisePool.execute(sql, [id])
@@ -215,6 +245,27 @@ async function updateTeamStatline(home , away ,conhome , conaway, yellows, reds,
   return row
 }
 
+async function getPlayersWorth(id){
+  let sql = "Select * from football_players_worth where player_id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id])
+  return rows
+}
+
+async function getTransfers(){
+  let sql = "Select * from transfers where extracted = 0"
+  const [rows, fields] = await promisePool.execute(sql)
+  return rows
+}
+
+async function transferPlayer(player_id, team_id){
+  let sql = "Update football_players set team_id=? where id=?"
+  const [row, fields] = await promisePool.execute(sql, [team_id, player_id])
+}
+
+async function updateTransferStatus(id){
+  let sql = "Update transfers set extracted=1 where id=?";
+  const [row, field] = await promisePool.execute(sql, [id])
+}
 /***************  TENNIS  ******************/
 async function getAtpRanking(gender)  {
   let sql = "SELECT * FROM tennis_players WHERE gender=? order by points DESC"
@@ -258,6 +309,12 @@ async function getPlayersMatches(id)  {
   return rows
 }
 
+async function getTennisMatchDetails(id){
+  let sql = "SELECT * FROM tennis_matches  WHERE id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+
 /***************  FORMUAL 1  ******************/
 async function getDriversRanking()  {
   let sql = "SELECT id, fname , lname , active, points FROM formula1_drivers WHERE active=1  order by points DESC"
@@ -277,15 +334,27 @@ async function getDriverById(id)  {
   return rows
 }
 
-async function getDriversTeam(id)  {
-  let sql = "SELECT name  FROM formula1_teams where id=?"
+async function getFormula1TeamById(id)  {
+  let sql = "SELECT * FROM formula1_teams where id=?"
   const [rows, fields] = await promisePool.execute(sql, [id]);
-  return rows[0].name
+  return rows
 }
 
-module.exports={ updateUserToken, getUserById, getUserByEmail,insertUser, getDriversTeam, getDriverById, getDriversRanking, getTeamsRanking, getTennisPlayer,getTennisPlayerName, 
-                getPlayersMatches, getMatchesByTournament, getAtpTournaments,getAtpRanking, getTournament,
-                getTransfers,getScorer, getFacts , getPlayer, getRules, getHomegoals, getAwaygoals, updateTeamStatline, getCards,
-                getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById,getMatchLineups, checkTeamsStatline,checkPlayersStatline,
-                updatePlayerStatline,updateMatchFactStatus, getMatchFacts, getTeamStatsByLeague,
-                getLeagueById, getLeague ,getTeamsIds, getLeagueTeams, getTeamsRoster}
+async function getFormula1Races()  {
+  let sql = "SELECT * FROM formula1_races "
+  const [rows, fields] = await promisePool.execute(sql);
+  return rows
+}
+
+async function getTeamPrincipal(id)  {
+  let sql = "SELECT * FROM formula1_staff where id=?"
+  const [rows, fields] = await promisePool.execute(sql, [id]);
+  return rows
+}
+
+module.exports={ updateUserToken, getUserById, getUserByEmail,insertUser,getFormula1Races, getFormula1TeamById, getDriverById, getDriversRanking, getTeamsRanking, getTennisPlayer,getTennisPlayerName, 
+                getPlayersMatches, getMatchesByTournament, getAtpTournaments,getAtpRanking, getTournament, getTennisMatchDetails,getTeamsTransfers,
+                getTransfers,getScorer, getFacts , getPlayer,transferPlayer,updateTransferStatus, getRules, getHomegoals, getAwaygoals, updateTeamStatline, getCards,getPlayersWorth, getMatchById,
+                getTeamsProfile, getTeamsMatches , getMatchScore, getTeamById,getMatchLineups, checkTeamsStatline,checkPlayersStatline,getPlayerStats,
+                updatePlayerStatline,updateMatchFactStatus,updateTeamPoints, updateMatchStatus, getMatchFacts, getTeamStatsByLeague,getMatches,
+                getLeagueById, getLeague ,getTeamsIds, getLeagueTeams, getTeamsRoster , getCountryById}

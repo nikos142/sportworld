@@ -24,12 +24,11 @@ export default function Formula1driver (){
                 obj.id=response.data.id
                 obj.name =response.data.name
                 obj.points =response.data.points
-                obj.nationality= response.data.nationality
+                obj.country= response.data.country
                 obj.team= response.data.team
                 obj.weight= response.data.weight
                 obj.height= response.data.height
                 setProfile(obj)
-               
                 })
         .catch(error=>{
             console.log(error)
@@ -44,7 +43,7 @@ export default function Formula1driver (){
       <div className="container">
           <div className="row">
               <div className="col-md-3">
-                  <img alt={"image"+id} style={{height:"300px", width:"300px", borderRadius:"50%"}}
+                  <img alt={"image"+id} style={{height:"300px", width:"300px", borderRadius:"50%", border:"5px solid black"}}
                   src={"http://localhost/f1project/formula1/avatars/"+id+".jpg"} />
               </div>
               <div className="col-md-9">
@@ -70,10 +69,10 @@ export default function Formula1driver (){
               </div>
               <div className="row" style={{marginTop:"30px"}}>
                 <div className="col-md-3" >
-                    <p><b>name:</b> {profile.name}</p>
+                    <p><b>Name:</b> {profile.name}</p>
                     <p><b>Team:</b> {profile.team}</p>
                     <p><b>Season Points:</b> {profile.points}</p>
-                    <p><b>nationality:</b> {profile.nationality}</p>
+                    <p><b>Country:</b> {profile.country}</p>
                     <p><b>Height:</b> {profile.height} cm</p>
                     <p><b>Weight:</b> {profile.weight} kg</p>
                 </div>

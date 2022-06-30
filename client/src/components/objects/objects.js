@@ -40,9 +40,11 @@ const PlayerObject = {
     id:"",
     name:"",
     foot:"",
-    nationality:"",
+    country:"",
     worth:"",
     position:"",
+    age:"",
+    height:"",
 }
 
 const TennisPlayerObject = {
@@ -50,7 +52,7 @@ const TennisPlayerObject = {
     name:"",
     age:"",
     hand:"",
-    nationality:"",
+    country:"",
     atp_rank:"",
     points:""
 }
@@ -75,7 +77,6 @@ const TennisMatchObject={
     time:""
 }
 
-
 const DriverObject = {
     id:"",
     name:"",
@@ -84,7 +85,7 @@ const DriverObject = {
     weight:"",
     team:"",
     points:"",
-    nationality:""
+    country:""
 }
 
 const FormulaTeamObject = {

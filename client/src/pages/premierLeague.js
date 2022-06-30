@@ -4,34 +4,40 @@ import { Bottom } from '../components/bottom';
 import { FootballMenu } from '../components/submenus/footballmenu'
 import TeamsTable from '../components/teamstable';
 import LeagueCharts from '../components/leagueCharts';
+import ConcededChart from '../components/concededChart';
+import CardsCharts from '../components/cardsChart';
 
 
 export default function PremierLeague (){
-    const [teams, setTeams] =React.useState([]);
     const [regelated, setRegelated] =React.useState([]);
     const [promoted, setPromoted] =React.useState([]);
     const [playoffs, setPlayoffs] =React.useState([]);
     const [playouts, setPlayouts] =React.useState([]);
     const [champions, setChampions] =React.useState([]);
+    const [league, setLeague] =React.useState("premierleague");
     const [europa, setEuropa] =React.useState([]);
     const [conference, setConference] =React.useState([]);
     const [data , setData] = React.useState([]) 
-    const [colors, setColors] = React.useState([])
    
 
     React.useEffect(() => {
    
         axios({
           method:"get",
-          url: "http://localhost:3001/football/premierleague",
+          url: "http://localhost:3001/football/"+league,
         })
        .then((response) =>{ 
-         setTeams(response.data.teams)
-        response.data.teams.forEach((element) =>{
-          colors.push({id:element.id, color:element.color } )
-        })
         response.data.stats.forEach((element)=>{
-         data.push({id:element.team_id, goals:element.goals , conceded:element.conceded } )
+         data.push({
+           id:element.team_id,
+           name:element.name, 
+           goals:element.goals , 
+           conceded:element.conceded , 
+           ycards:element.yellow_cards , 
+           rcards:element.red_cards , 
+           points:element.points,
+           color:element.color
+          })
         })
      })
        .catch((error) => {console.error(error)
@@ -61,12 +67,22 @@ return(<>
 <div className='container-fluid'>
     <div className='row'>
         <div className='col-md-8'>
-            <h3 style={{marginLeft:"40%"}}>Premier League News</h3>   
-            <LeagueCharts data={data} colors={colors}/>
+            <h3 style={{marginLeft:"40%"}}>Premier League Stats</h3>   
         </div>
         <div className='col-md-4'>
-        <h3 style={{marginLeft:"55%"}}>Standings</h3>
-           <TeamsTable teams={teams}  champions={champions}  europa={europa}  conference={conference} regelated={regelated}/>
+        <h3 style={{textAlign:"center"}}>Standings</h3>
+        </div>
+    </div><br/>
+    <div className='row'>
+        <div className='col-md-4'>  
+            <LeagueCharts data={data}/>
+            <CardsCharts data={data}/>
+        </div>
+        <div className='col-md-4'>  
+            <ConcededChart data={data}/>
+        </div>
+        <div className='col-md-4'>
+           <TeamsTable teams={data} league={league} champions={champions}  europa={europa}  conference={conference} regelated={regelated}/>
         </div>
     </div>
 </div>

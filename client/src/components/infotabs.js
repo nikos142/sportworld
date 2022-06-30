@@ -8,10 +8,6 @@ import Popover from 'react-bootstrap/Popover';
 import React from 'react';
 import axios from 'axios';
 import {FixtureObject,PlayerObject,ResultObject, factsObject, TransferObject} from"./objects/objects.js";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import Button from 'react-bootstrap/Button'
 
@@ -26,8 +22,6 @@ const [goalkeepers, setGoalkeepers]= React.useState([])
 const [results, setResults]= React.useState([])
 const [fixtures, setFixtures]= React.useState([])
 const [transfers, setTransfers]= React.useState([])
-const [dense, setDense] = React.useState(true);
-
 
 
 React.useEffect(()=>{
@@ -73,7 +67,6 @@ React.useEffect(()=>{
         url: "http://localhost:3001/football/matches/"+id,
     })
     .then(response =>{
-        console.log(response.data)
         var tempResults=[]
         var tempFixtures=[]
     response.data.forEach((element) =>{
@@ -124,6 +117,7 @@ React.useEffect(()=>{
         url: "http://localhost:3001/football/transfers/"+id,
     })
     .then(response =>{
+        console.log(response.data)
         var tempTransfers=[]
         response.data.forEach((element) =>{
                  var obj= Object.create(TransferObject)
@@ -165,54 +159,54 @@ React.useEffect(()=>{
                     <Col sm={9}>
                     <Tab.Content>
                         <Tab.Pane eventKey="first">
-                            <List dense={dense} >
+                            <table >
+                                <tbody>
+                                    <tr style={{display:"flex", flexWrap:"wrap"}}>
                                 {goalkeepers.map((row,index)=> (
-                                    <ListItem  key={index}>
-                                        <ListItemAvatar>
-                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
-                                        />
-                                    </ListItem>
+                                    <td style={{padding:"15px"}} key={index}>
+                                  <td><Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/></td>
+                                  <td><Link to={"/football/player/profile/"+row.id} className="link">{row.name}</Link></td>
+                                        </td>
                                     ))}
-                            </List>
-                            <List dense={dense}>
+                                    </tr>
+                                </tbody>
+                            </table>       
+                            <table >
+                                <tbody>
+                                    <tr style={{display:"flex", flexWrap:"wrap"}}>
                                 {defenders.map((row,index)=> (
-                                    <ListItem  key={index}>
-                                        <ListItemAvatar>
-                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
-                                        />
-                                    </ListItem>
+                                    <td style={{padding:"15px"}} key={index}>
+                                  <td><Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/></td>
+                                  <td><Link to={"/football/player/profile/"+row.id} className="link" >{row.name}</Link></td>
+                                        </td>
                                     ))}
-                            </List>
-                            <List dense={dense}>
+                                    </tr>
+                                </tbody>
+                            </table>       
+                            <table >
+                                <tbody>
+                                    <tr style={{display:"flex", flexWrap:"wrap"}}>
                                 {midfielders.map((row,index)=> (
-                                    <ListItem  key={index}>
-                                        <ListItemAvatar>
-                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
-                                        />
-                                    </ListItem>
+                                    <td style={{padding:"15px"}} key={index}>
+                                  <td><Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/></td>
+                                  <td><Link to={"/football/player/profile/"+row.id} className="link" >{row.name}</Link></td>
+                                        </td>
                                     ))}
-                            </List>
-                            <List dense={dense}>
+                                    </tr>
+                                </tbody>
+                            </table>       
+                            <table >
+                                <tbody>
+                                    <tr style={{display:"flex", flexWrap:"wrap"}}>
                                 {attackers.map((row,index)=> (
-                                    <ListItem  key={index}>
-                                        <ListItemAvatar>
-                                            <Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={<Link to={"/football/player/profile/"+row.id} >{row.name}</Link>}
-                                        />
-                                    </ListItem>
+                                    <td style={{padding:"15px"}} key={index}>
+                                  <td><Avatar  src={"http://localhost/f1project/players/"+row.id+".jpg"}/></td>
+                                  <td><Link to={"/football/player/profile/"+row.id} className="link" >{row.name}</Link></td>
+                                        </td>
                                     ))}
-                            </List>
+                                    </tr>
+                                </tbody>
+                            </table>       
                         </Tab.Pane>
                         <Tab.Pane eventKey="second">
                             {results.length>0?(<table className='table'>
@@ -309,7 +303,7 @@ React.useEffect(()=>{
                                                                         <td>{item.date}</td>
                                                                 </tr>))}
                                 </tbody>
-                        </table>):(<p>No scheduled matches</p>)}
+                        </table>):(<p>No recent transfers</p>)}
                     </Tab.Pane>
                     </Tab.Content>
                     </Col>

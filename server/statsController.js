@@ -48,13 +48,32 @@ async function updateTeamStats(){
      }
     await database.updateTeamStatline(home, away, conhome, conaway,  yellows, reds, teamids[i])
   }
+
+  var matches =await database.getMatches()
+    for (i in matches)
+    {
+      if(matches[i].home_team_score > matches[i].away_team_score)
+      {
+          await database.updateTeamPoints(matches[i].home_team_id, 3)
+      }
+      else if( matches[i].home_team_score < matches[i].away_team_score)
+      {
+            await database.updateTeamPoints(matches[i].away_team_id, 3)
+      }
+      else
+      {
+            await database.updateTeamPoints(matches[i].home_team_id, 1)
+            await database.updateTeamPoints(matches[i].away_team_id, 1)
+      }
+
+      await database.updateMatchStatus(matches[i].id)
+    }
   console.log("Team stats Updated")
 }
 
 async  function updatePlayerStats()
 {
     var facts= await database.getMatchFacts()
-
     for (i in facts)
     {   
         await database.checkPlayersStatline(facts[i].player_id)

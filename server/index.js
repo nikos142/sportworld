@@ -9,7 +9,8 @@ const app = express();
 const path = require("path");
 const database = require("./database.js")
 const  stats= require("./statsController.js")
-const {matchObject, factsObject, transferObject, tennisMatchObject, DriverObject} = require("./objects/matchObject");
+const transfers = require("./transfersController.js")
+const {matchObject, factsObject, transferObject, tennisMatchObject, DriverObject, FormulaTeamObject} = require("./objects/matchObject");
 const {createAccessToken, createRefreshToken , sendAccessToken, sendRefreshToken} = require("./tokens.js")
 const {isAuth} =require('./isAuth');
 app.use(cookieParser());
@@ -18,6 +19,12 @@ var cron = require('node-cron');
 cron.schedule('0 0 * * * *',  () => {
     stats.updatePlayerStats()
     stats.updateTeamStats()
+    console.log("Stats Updated")
+});
+
+cron.schedule('0 0 0 * * *',  () => {
+    transfers.updateRosters()
+    console.log("Rosters Updated")
 });
 
 
@@ -141,21 +148,25 @@ app.post('/refresh_token', async (req, res) => {
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
-/***************  FOOTBALL  ******************* */
+/***************  FOOTBALL  ********************/
 app.get("/football/:league", async (req, res) => {
   var league=req.params.league
   console.log(league+" teams requested")
   try
     {
       var league_id =await database.getLeague(league)
-      var teams =await database.getLeagueTeams(league_id)
       var stats = await database.getTeamStatsByLeague(league_id)
+      for (i in stats){
+        var team = await database.getTeamById(stats[i].team_id)
+        stats[i].name=team.name
+        stats[i].color=team.color
+      }  
     }
   catch(error)
     {
       console.log(error)
     }
-    res.send({teams:teams , stats:stats})
+    res.send({stats})
 })
 
 app.get("/football/matches/:id", async (req, res) => {
@@ -167,8 +178,10 @@ app.get("/football/matches/:id", async (req, res) => {
        const obj =Object.create(matchObject)
          obj.id=matches[i].id
          obj.league= await database.getLeagueById(matches[i].league_id)
-         obj.home_team= await database.getTeamById(matches[i].home_team_id)
-         obj.away_team= await database.getTeamById(matches[i].away_team_id)
+         var teamH= await database.getTeamById(matches[i].home_team_id)
+         var teamA = await database.getTeamById(matches[i].away_team_id)
+         obj.home_team= teamH.name
+         obj.away_team= teamA.name
          obj.done=matches[i].done
          var date=new Date(matches[i].date)
          obj.date = date.getDate() +"-"+date.getMonth()+"-"+date.getFullYear()
@@ -208,21 +221,50 @@ app.get("/football/matches/:id", async (req, res) => {
           }  
 })
 
-app.get("/football/match/lineups/:id", async (req, res) => {
+app.get("/football/match/details/:id", async (req, res) => {
   var id=req.params.id
-  var lineups = await database.getMatchLineups(id)
-  var pid=JSON.stringify(lineups[0].lineups.away)
-  var arr= Array.from(pid)
-  arr.shift()
-  arr.pop()
-  var players=[]
+  try{
+  var match = await database.getMatchById(id)
+  var away=JSON.stringify(match[0].lineups.away)
+  var home=JSON.stringify(match[0].lineups.home)
+  var arr =Array.from(away.split(","))
+  var arr2 =Array.from(home.split(","))
+  var firsthome = arr2[0].split("[")
+  arr2[0]= firsthome[1]
+  var firstaway=arr[0].split("[")
+  arr[0]= firstaway[1]
+  var lasthome = arr2[arr2.length-1].split("]")
+  arr2[arr2.length-1]= lasthome[0]
+  var lastaway =arr[arr.length-1].split("]")
+  arr[arr.length-1] = lastaway[0]
+  var playersaway=[]
+  var playershome=[]
+  for(i in arr2)
+  {  
+    var player=await database.getPlayer(arr2[i])
+    playershome.push({name:player.fname+" "+player.lname , 
+                  position:player.position})
+  }
   for(i in arr)
   {
     var player=await database.getPlayer(arr[i])
-    players.push({name:player.fname+" "+player.lname , 
+    playersaway.push({name:player.fname+" "+player.lname , 
                   position:player.position})
   }
- res.send(players)
+  var teams=[]
+  var hometeam=await database.getTeamById(match[0].home_team_id)
+  var awayteam=await database.getTeamById(match[0].away_team_id)
+  var score= []
+  score.push({home:match[0].home_team_score})
+  score.push({away:match[0].away_team_score})
+   teams.push({id:match[0].home_team_id,name:hometeam.name,color:hometeam.color})
+   teams.push({id:match[0].away_team_id,name:awayteam.name,color:awayteam.color})
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+  res.send({home:playershome , away:playersaway, teams:teams, score:score})
 })
 
 app.get("/football/team/profile/:id", async (req, res) => {
@@ -254,12 +296,21 @@ app.get("/football/player/:id" , async (req, res) => {
       var id=req.params.id
       try{
         var player= await database.getPlayer(id)
+        var country = await database.getCountryById(player.country_id)
+        player.country_id=country.name
+        var stats= await database.getPlayerStats(id)
+        var worth= await database.getPlayersWorth(id)
+        for (i in worth){
+          var date=new Date(worth[i].date)
+          var year =date.getFullYear()
+          worth[i].date=year
+        }
           }
           catch(error)
           {
             console.log(error)
           }
-          res.send(player)
+          res.send({player:player, stats:stats ,worth:worth })
 })
 
 app.get("/football/rules/:id", async (req, res) => {
@@ -279,7 +330,7 @@ app.get("/football/transfers/:id", async (req, res) =>
    var id=req.params.id
   
    try{
-      var transfers =await database.getTransfers(id)
+      var transfers =await database.getTeamsTransfers(id)
       var data = []
         for(i in transfers)
         {
@@ -290,8 +341,10 @@ app.get("/football/transfers/:id", async (req, res) =>
           obj.date = date.getDate() +"-"+date.getMonth()+"-"+date.getFullYear()
           var player = await database.getPlayer(transfers[i].player_id)
           obj.player = player.fname+" "+player.lname 
-          obj.from = await database.getTeamById(transfers[i].from_team)
-          obj.to =await database.getTeamById(transfers[i].to_team)
+          var from= await database.getTeamById(transfers[i].from_team)
+          obj.from = from.name
+          var to =await database.getTeamById(transfers[i].to_team)
+          obj.to = to.name
           data.push(obj)
         }
       }
@@ -321,6 +374,8 @@ app.get("/tennis/profile/:id", async (req, res) =>
   var id=req.params.id
   try{
    var data= await database.getTennisPlayer(id)
+   var country =await database.getCountryById(data[0].country_id)
+   data[0].country_id=country.name
    var tempmatches = await database.getPlayersMatches(id)
    var matches=[]
    for (i in tempmatches)
@@ -365,6 +420,21 @@ app.get("/tennis/tournaments", async (req, res) =>
 })
 
 
+app.get("/tennis/match/details/:id", async (req, res) =>
+{
+  var id=req.params.id
+  try{
+   var data= await database.getTennisMatchDetails(id)
+   console.log(data)
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+  res.send(data)
+})
+
+
 /***************  FORMULA 1  ******************/
 app.get("/formula1/ranking", async (req, res) =>
 {
@@ -379,6 +449,40 @@ app.get("/formula1/ranking", async (req, res) =>
   res.send({drivers:drivers , teams:teams})
 })
 
+app.get("/formula1/races", async (req, res) =>
+{
+  try{
+   var races= await database.getFormula1Races()
+  console.log(races[0].standings)
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+  res.send(races)
+})
+
+app.get("/formula1/team/profile/:id", async (req, res) =>{
+  var id=req.params.id
+  try{
+    var team = await database.getFormula1TeamById(id)
+    const obj =  Object.create(FormulaTeamObject)
+    obj.id=team[0].id
+    obj.name=team[0].name
+    obj.headquarters=team[0].headquarters
+    obj.owner=team[0].owner
+    obj.points=team[0].points
+    obj.principal=team[0].team_principal
+    var country = await database.getCountryById(team[0].country_id)
+    obj.country= country.name
+    res.send(obj)
+  }
+  catch(error)
+  {
+    console.log(error)
+  }
+})
+
 app.get("/formula1/driver/profile/:id", async (req, res) =>{
   var id=req.params.id
   try
@@ -388,11 +492,13 @@ app.get("/formula1/driver/profile/:id", async (req, res) =>{
     obj.id=id
     obj.name=driver[0].fname +" "+driver[0].lname
     obj.age=driver[0].age
-    obj.nationality=driver[0].nationality
+    var country = await database.getCountryById(driver[0].country_id)
+    obj.country= country.name
     obj.height=driver[0].height
     obj.weight=driver[0].weight
     obj.points=driver[0].points
-    obj.team = await database.getDriversTeam(driver[0].team_id)
+    var team = await database.getFormula1TeamById(driver[0].team_id)
+    obj.team=team[0].name
     res.send(obj)
   }
   catch(error)

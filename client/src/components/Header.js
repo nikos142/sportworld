@@ -10,10 +10,10 @@ export const Header = () => {
             style={{float:"left", color:"black", textDecoration:"none",fontSize:"20pt", paddingLeft:"10px" , paddingTop:"3px"}}>
                 Uni-Sport</Link>
             <ul  className="nav ">
-                <li class="nav-item">
+                <li className="nav-item">
                     <Link className="nav-link link" to="/football">Football</Link>
                 </li>
-                <li class="nav-item">
+                <li className="nav-item">
                     <Link className="nav-link link" to="/basketball">Basketball</Link>
                 </li>
                 <li className="nav-item">

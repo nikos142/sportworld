@@ -10,7 +10,16 @@ const matchObject = {
     date:"",
     time:""
 }
-
+const footballTeamObject={
+    id:"",
+    name:"",
+    goals: "",
+    conceded:"",
+    points:"",
+    color:"",
+    ycards:"",
+    rcards:"",
+}
 const factsObject ={
     id:"",
     match_id:"",
@@ -56,9 +65,10 @@ const FormulaTeamObject = {
     id:"",
     name:"",
     country:"",
+    headquarters:"",
     principal:"",
     owner:"",
     points:""
 }
 
-module.exports ={matchObject, factsObject,  transferObject , tennisMatchObject, DriverObject, FormulaTeamObject}
+module.exports ={matchObject, footballTeamObject ,  factsObject,  transferObject , tennisMatchObject, DriverObject, FormulaTeamObject}

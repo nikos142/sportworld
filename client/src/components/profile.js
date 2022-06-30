@@ -5,7 +5,7 @@ import Infotabs from './infotabs';
 
 
 export default function Profile(){
-const {id ,  league} =useParams();
+const {id } =useParams();
 const [fname, setFname] = React.useState();
 const [lname, setLname] = React.useState()
 const [stadium, setStadium] = React.useState()
@@ -32,21 +32,19 @@ return(<>
  <div className="container">
      <div className="row" style={{marginTop:"30px"}}>
          <div className="col-md-3" >
-             <img className="img-responsive" style={{width:"90%"}} 
-             src={'http://localhost/f1project/teams/'+league+'/'+id+".png"}/>
+             <img className="img-responsive" style={{width:"80%", height:"300px"}} 
+             src={'http://localhost/f1project/teams/'+id+".png"}/>
+             <div style={{marginTop:"30px", marginLeft:"20px"}}>
+                <p><b>Town:</b> {town}</p>
+                <p><b>Stadium:</b> {stadium}</p>
+                <p><b>Owner:</b> {owner}</p>
+                <p><b>Coach:</b> {fname} {lname}</p>
+             </div>
          </div>
          <div className="col-md-9"> 
           <Infotabs id={id}/>
          </div>
      </div>
-     <div className="row" style={{marginTop:"30px"}}>
-         <div className="col-md-3">
-             <p><b>Town:</b> {town}</p>
-             <p><b>Stadium:</b> {stadium}</p>
-             <p><b>Owner:</b> {owner}</p>
-             <p><b>Coach:</b> {fname} {lname}</p>
-         </div>
-         </div>
  </div>
 </>)
 }

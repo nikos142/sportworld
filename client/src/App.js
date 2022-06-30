@@ -18,7 +18,9 @@ import Formula1driver from "./components/formula1driver";
 import Player from "./components/player";
 import Ligue1 from "./pages/ligue1";
 import MatchDetails from "./components/matchdetails";
-
+import TennisMatchDetails from "./components/tennisMatchDetails";
+import Formula1team from "./components/formula1team";
+import Formula1Races from "./components/formula1races";
 
 
 export const UserContext = React.createContext([])
@@ -36,11 +38,10 @@ function App() {
 
     setUser({})
     window.location.replace('/')
-
   }
 
   React.useEffect(() => { 
-    document.body.style.backgroundColor = '#EFEFEE'
+    document.body.style.backgroundColor = '#ffffff'
   
     async function checkRefreshToken(){
       const result =await (await fetch('http://localhost:3001/refresh_token' , {
@@ -73,17 +74,20 @@ function App() {
     <Route exact path="/football/player/profile/:id" element={<Player/>}/>
     <Route exact path="/football/match/details/:id" element={<MatchDetails/>}/>
     <Route exact path="/football/premierleague" element={<PremierLeague/>}/>
-    <Route exact path="/football/:league/:id"  element={<Profile/>} />
     <Route exact path="/football/laliga" element={<LaLiga/>}/>
     <Route exact path="/football/bundesliga" element={<Bundesliga/>}/>
     <Route exact path="/football/serieA" element={<SerieA/>}/>
     <Route exact path="/football/ligue1" element={<Ligue1/>}/>
+    <Route exact path="/football/:league/:id"  element={<Profile/>} />
     <Route exact path="/basketball" element={<Basketball/>}/>
     <Route exact path="/tennis" element={<Tennis/>}/>
     <Route exact path="/tennis/profile/:id" element={<TennisPlayer/>}/>
+    <Route exact path="/tennis/match/details/:id" element={<TennisMatchDetails/>}/>
     <Route exact path="/formula1" element={<Formula1/>}/>
     <Route exact path="/formula1/profile/:id" element={<Formula1driver/>}/>
+    <Route exact path="/formula1/races" element={<Formula1Races/>}/>
     <Route exact path="/formula1/team/:id" element={<Formula1/>}/>
+    <Route exact path="/formula1/profile/team/:id" element={<Formula1team/>}/>
     <Route exact path="/"  element={<Index/>} />
 </Routes>
 </Router>

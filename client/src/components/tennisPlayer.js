@@ -6,6 +6,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import {TabPanel, a11yProps} from "./../helpers/functions";
+import { Link } from 'react-router-dom';
+import Button from 'react-bootstrap/esm/Button';
 
 
 export default function TennisPlayer (){
@@ -24,13 +26,12 @@ export default function TennisPlayer (){
                  obj.id=response.data.profile[0].id
                 obj.name =response.data.profile[0].fname +" "+response.data.profile[0].lname
                 obj.atp_rank= response.data.profile[0].atp_rank
-                obj.nationality= response.data.profile[0].nationality
+                obj.country= response.data.profile[0].country_id
                 obj.hand= response.data.profile[0].hand
                 setNames(obj)
                 var data2=[]
                 var data3=[]
                 response.data.matches.forEach((element)=>{
-                    console.log(element.done)
                     if(element.done===1){
                         const obj = Object.create(TennisMatchObject)
                         obj.id=element.id
@@ -67,9 +68,9 @@ export default function TennisPlayer (){
 
     return(<>
       <div className="container">
-          <div className="row">
+          <div className="row" style={{marginTop:"40px"}}>
               <div className="col-md-3">
-                  <img alt={"image"+id} style={{height:"300px", width:"300px", borderRadius:"50%"}}
+                  <img alt={"image"+id} style={{height:"300px", width:"300px", border:"5px solid black",borderRadius:"50%"}}
                   src={"http://localhost/f1project/tennis/avatars/"+id+".jpg"} />
               </div>
               <div className="col-md-9">
@@ -83,7 +84,7 @@ export default function TennisPlayer (){
                     <table className="table">
                         <tbody>
                             {donematches.map((item , index)=>(<tr key={index}>
-                                <td>{item.tour}</td><td>{item.player1}</td><td>{item.player2}</td><td>{item.date}</td><td>{item.time}</td><td>{item.score}</td>
+                                <td>{item.tour}</td><td>{item.player1}</td><td>{item.player2}</td><td>{item.date}</td><td>{item.time}</td><td>{item.score}</td><td><Link to={"/tennis/match/details/"+item.id}><Button>Details</Button></Link></td>
                             </tr>))}
                         </tbody>
                     </table>
@@ -100,8 +101,8 @@ export default function TennisPlayer (){
               </div>
               <div className="row" style={{marginTop:"30px"}}>
                 <div className="col-md-3" >
-                    <p><b>name:</b> {names.name}</p>
-                    <p><b>nationality:</b> {names.nationality}</p>
+                    <p><b>Name:</b> {names.name}</p>
+                    <p><b>Country:</b> {names.country}</p>
                     <p><b>Hand:</b> {names.hand}</p>
                     <p><b>Atp Ranking:</b> {names.atp_rank}</p>
                 </div>

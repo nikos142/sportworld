@@ -53,9 +53,9 @@ export default function Formula1(){
         
 return(<>
 <div className="container">
-    <div className="row" style={{ marginTop:"50px"}}>
+    <div className="row" style={{ marginTop:"100px"}}>
         <div className="col-md-8">
-            <div className="row">
+            <div className="row" >
                 <div className="col-md-6">
                     <Link to={"drivers"}>
                         <Card className="bg-dark text-white" >
@@ -89,7 +89,7 @@ return(<>
             </div>
         </div>
         <div className="col-md-4">
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' ,marginTop:"-70px" }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' , marginTop:"-90px" }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Drivers" {...a11yProps(0)} />
                     <Tab label="Constructors" {...a11yProps(1)} />
@@ -115,7 +115,7 @@ return(<>
                                                           <td><Avatar alt={item.name} 
                                                                     sx={{ width: 50, height: 50 }} 
                                                                     src={"http://localhost/f1project/formula1/teams/"+item.id+".jpg" }/></td> 
-                                                          <td><Link className="link" to={"profile/"+item.id}>{item.name}</Link></td>
+                                                          <td><Link className="link" to={"profile/team/"+item.id}>{item.name}</Link></td>
                                                           <td>{item.points}</td>
                                                 </tr>))}
                     </tbody>

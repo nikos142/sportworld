@@ -1,22 +1,21 @@
 import React  from 'react'
-import { BarChart,Bar, YAxis, XAxis, Tooltip,Legend, Cell, ResponsiveContainer } from 'recharts';
+import { BarChart,Bar,XAxis, YAxis, Tooltip,Legend, Cell, ResponsiveContainer } from 'recharts';
 
-
-export default function LeagueCharts ({data}){
-
+export default function ConcededChart ({data}){
+   
 return(<>
-        <ResponsiveContainer width="90%" height="30%" >
+      <ResponsiveContainer width="90%" height="30%">
               <BarChart
                 width={500}
                 height={300}
                 data={data}
                 barSize={10}
               >
-              <XAxis dataKey={"name"}/>
-              <YAxis dataKey="goals" />
-              <Tooltip />
-              <Legend  />
-              <Bar dataKey="goals" >
+              <XAxis dataKey="name"/>
+              <YAxis dataKey="conceded"/>
+              <Tooltip/>
+              <Legend/>
+              <Bar dataKey="conceded">
                 {data.map((entry, index) => (<>
                     <Cell key={`cell-${index}`}  fill={entry.color}/>
                 </> ))}
