@@ -21,13 +21,6 @@ export function TabPanel(props) {
     );
   }
 
-  export function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
-  }
-
 
  export const getPath = (x, y, width, height) => `M${x},${y + height}
   C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
@@ -39,3 +32,10 @@ const { fill, x, y, width, height } = props;
 
 return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
 };
+
+export function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
